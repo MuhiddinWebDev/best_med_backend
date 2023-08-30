@@ -39,6 +39,7 @@ const KirishRouter = require('../routes/admin-app/kirish_summa.route')
 const soriRouter = require('../routes/admin-app/sori.route')
 const Hisobot = require('../routes/admin-app/hisobot')
 const Bassen = require('../routes/admin-app/kirish_bassen.route')
+const settingsRouter = require('../routes/admin-app/settings.route')
 const HttpException = require('../utils/HttpException.utils');
 
 module.exports = function(app){
@@ -86,6 +87,7 @@ module.exports = function(app){
         app.use(`/api/v1/admin-app/sori`, soriRouter);
         app.use(`/api/v1/admin-app/hisobot`, Hisobot);
         app.use(`/api/v1/admin-app/bassen`, Bassen);
+        app.use(`/api/v1/admin-app/settings`, settingsRouter);
 
         app.use(`/api/v1/admin-app`, express.static('upload'));
 

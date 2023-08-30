@@ -15,15 +15,14 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.insert('user', 
-    ['user_name', 'password', `role`, `salary`], 
-    ['Dasturchi', '$2a$08$dQvTYSK/qBy9.6TLHnAhJuElK/q.L2dIQHAU40lwj4n5HMFxTNu1u', `Admin`, '0']
-    
+  return db.insert('filial', 
+    ['name'], 
+    ['Asosiy']
   );
 };
 
-exports.down = function() {
-  return null;
+exports.down = function(db) {
+    return db.delete('filial').where({name: 'Asosiy'});
 };
 
 exports._meta = {
