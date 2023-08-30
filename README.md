@@ -1,3 +1,6 @@
+Bu yangi universal klinika dasturi yang BDM filiali uchun
+
+
 Readme ma'lumotlari
 
 #migratsiya uchun
