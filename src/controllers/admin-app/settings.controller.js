@@ -45,11 +45,10 @@ class SettingsController {
 
     update = async (req, res, next) => {
         this.checkValidation(req);
-
-        var {...data} = req.body;
-        var id = parseInt(req.params.id);
+        let {...data} = req.body;
+        let id = parseInt(req.params.id);
         
-        var model = await SettingsModel.findOne({where : {id: id}})
+        let model = await SettingsModel.findOne({where : {id: id}})
 
         if (!model) {
             throw new HttpException(404, 'data not found');
@@ -57,10 +56,9 @@ class SettingsController {
         try{
             model.name = data.name;
             model.logo = data.logo;
-            model.data1 = data.data1;
-            model.data2 = data.data2;
+            model.date1 = Number(data.date1);
+            model.date2 = Number(data.date2);
             model.quote = data.quote;
-            await model.validate();
             await model.save();
         }catch(e){
             if(e instanceof ValidationError){
