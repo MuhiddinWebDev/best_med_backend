@@ -24,6 +24,12 @@ SettingsModel.init({
     },
     quote: {
         type: DataTypes.STRING(200),
+    },
+    header_left: {
+        type: DataTypes.STRING(200),
+    },
+    header_right: {
+        type: DataTypes.STRING(200),
     }
 }, {
   // Other model options go here

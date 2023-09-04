@@ -59,6 +59,8 @@ class SettingsController {
             model.date1 = Number(data.date1);
             model.date2 = Number(data.date2);
             model.quote = data.quote;
+            model.header_right = data.header_right;
+            model.header_left = data.header_left;
             await model.save();
         }catch(e){
             if(e instanceof ValidationError){
