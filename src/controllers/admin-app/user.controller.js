@@ -10,6 +10,7 @@ const InspectionModel = require('../../models/inspector_category.model');
 const { error } = require('winston');
 const RoomModel = require('../../models/room.model');
 const filialModel = require('../../models/filial.model');
+const settingsModel = require('../../models/settings.model');
 
 /******************************************************************************
  *                              User Controller
@@ -18,6 +19,7 @@ class UserController {
     userLogin = async (req, res, next) => {
         this.checkValidation(req);
         const {  password, login,filial_id } = req.body;
+        
         const model = await UserModel.findOne({
             include:[
                 {model: DoctorModel, as: 'doctor',
@@ -37,11 +39,14 @@ class UserController {
                 filial_id: filial_id
             }
         });
+
         if(!model){
             throw new HttpException(404, 'Filialda bunday hodim mavjud emas')
         }
+        
         const isMatch = await bcrypt.compare(password, model.password)
-        delete model['password'];
+        delete model.dataValues['password'];
+
         if(!isMatch){
             throw new HttpException(404, "Parol noto'g'ri kiritildi")
         }
@@ -50,14 +55,31 @@ class UserController {
         if(!token){
            throw new HttpException(404, "token mavjud emas")
         }
+        
+
+        const checkExpiredApp = await settingsModel.findAll({
+            order: [['id', 'DESC']],
+            limit: 1
+        })
+
+        let currentDay = new Date().toISOString().split("T")[0]
+        let appDate = new Date(checkExpiredApp[0].date2 * 1000).toISOString().split("T")[0]
+        
+        let expired = false
+        if(currentDay >= appDate) {
+            expired = true
+        }
+
         model.token = token
         res.status(200).send({
             error: false,
             error_code: 200,
             message: 'Ro\'yhatdan o\'tdingiz',
-            data: model
+            data: model,
+            expired: expired
         });
     };
+
     byName = async (req, res, next) => {
         const model = await UserModel.findAll({
                     attributes: ['id','user_name'],
@@ -69,6 +91,7 @@ class UserController {
             data: model
         });
     }
+    
     FilialUserlari = async (req, res, next) => {
         const model = await UserModel.scope('withoutPassword').findAll({
                     attributes: ['id','user_name','role'],
@@ -99,6 +122,7 @@ class UserController {
             data: model
         });
     }
+
     getAll = async (req, res, next) =>{
         const model = await UserModel.scope('withoutPassword').findAll({
             include:[
@@ -124,7 +148,8 @@ class UserController {
             message: 'Malumotlar chiqdi',
             data: model
         });
-       }
+    }
+
     getOne = async (req, res, next) =>{
         const model = await UserModel.scope('withoutPassword').findOne({
             where:{
@@ -141,6 +166,7 @@ class UserController {
             data: model
         });
     }
+
     create = async(req, res, next) => {
         this.checkValidation(req);
         if (req.body.password) {
@@ -155,6 +181,7 @@ class UserController {
             data: modell
         });
     }
+
     update = async (req, res, next) =>{
         const salt = await bcrypt.genSalt();
         let data = req.body;
@@ -183,6 +210,7 @@ class UserController {
             data: model
         });
     }
+
     delete = async (req, res, next) =>{
         const model = await UserModel.destroy({
             where:{
@@ -201,6 +229,7 @@ class UserController {
         });
     }
     }
+
     checkValidation = (req) => { 
         const errors = validationResult(req)
         if (!errors.isEmpty) {
@@ -213,8 +242,7 @@ class UserController {
         if (req.body.password) {
             req.body.password = await bcrypt.hash(req.body.password, 8);
         }
-    }
-    
+    }    
 }
 
 
