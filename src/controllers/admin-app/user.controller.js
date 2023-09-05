@@ -66,7 +66,7 @@ class UserController {
         let appDate = new Date(checkExpiredApp[0].date2 * 1000).toISOString().split("T")[0]
         
         let expired = false
-        if(currentDay >= appDate) {
+        if(currentDay > appDate) {
             expired = true
         }
 

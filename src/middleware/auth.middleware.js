@@ -2,6 +2,7 @@ const HttpException = require('../utils/HttpException.utils');
 const UserModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const {secret_jwt} = require('../startup/config')
+const settingsModel = require('../models/settings.model')
 
 const auth = (...roles) => {
     return async function (req, res, next) {
@@ -33,6 +34,17 @@ const auth = (...roles) => {
                 throw new HttpException(403, 'Unauthorized');
             }
 
+            // Dastur amal qilish muddatini tekshirishd
+            const checkExpiredApp = await settingsModel.findAll({
+                order: [['id', 'DESC']],
+                limit: 1
+            })
+            let currentDay = new Date().toISOString().split("T")[0]
+            let appDate = new Date(checkExpiredApp[0].date2 * 1000).toISOString().split("T")[0]
+            if(currentDay > appDate) {
+                throw new HttpException(402, 'App expired');
+            }
+            
             // if the user has permissions
             req.currentUser = user;
             next();
