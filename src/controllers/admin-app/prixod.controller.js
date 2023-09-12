@@ -30,7 +30,6 @@ class prixodController {
             data: model
         });
     }
-
     getOne = async (req, res, next) => {
         this.checkValidation(req);
         const model = await prixod_Model.findOne({
@@ -57,7 +56,7 @@ class prixodController {
             data: model
         });
     }
-   create =  async(req, res, next) => {
+    create =  async(req, res, next) => {
        this.checkValidation(req);
        const {prixod_table, ...data} = req.body;
        const model = await prixod_Model.create({
@@ -78,13 +77,13 @@ class prixodController {
        }
        await register_supplierModel.create(register);
        res.status(200).send({
-        error: false,
-        error_code: 200,
-        message: 'Malumotlar qo\'shildi',
-        data: model
-    });
-   }
-   update = async (req, res, next) => {
+            error: false,
+            error_code: 200,
+            message: 'Malumotlar qo\'shildi',
+            data: model
+       });
+    }
+    update = async (req, res, next) => {
        this.checkValidation(req);
     const model = await prixod_Model.findOne({
         where:{
@@ -120,63 +119,66 @@ class prixodController {
         message: 'Malumotlar tahrirlandi',
         data: model
     });
-}
-#prixod_table = async(model, prixod_table, insert = true) => {
-    if(!insert){
-       await this.#deletePrixodTable(model.id)
-       await this.#deleteRegister_reagent(model.id)
     }
-    for(let key of prixod_table){
-        var tables = {
-            "reagent_id": key.reagent_id,
-            "price": key.price,
-            "prixod_id": model.id,
-            "count": key.count,
-            "summa": key.summa
-           }
-           await prixod_tableModel.create(tables);
-        var reagent = {
-            "reagent_id": key.reagent_id,
-            "price": key.price,
-            "doc_id": model.id,
-            "count": key.count,
-            "summa": key.summa,
-            "date_time": Math.floor(new Date().getTime() / 1000),
-            "doc_type": "chiqim"
+    #prixod_table = async(model, prixod_table, insert = true) => {
+        if(!insert){
+        await this.#deletePrixodTable(model.id)
+        await this.#deleteRegister_reagent(model.id)
         }
-        await register_reagentModel.create(reagent);
-    }
-}
-#deletePrixodTable = async(doc_id) =>{
-   await prixod_tableModel.destroy({where:{prixod_id: doc_id}})
-}
-#deleteRegister_reagent = async(id) => {
-    await register_reagentModel.destroy({where: {doc_id: id}})
-}
-delete = async (req, res, next) => {
-  const model = await prixod_Model.destroy({
-        where:{
-          id: req.params.id
+        for(let key of prixod_table){
+            var tables = {
+                "reagent_id": key.reagent_id,
+                "price": key.price,
+                "prixod_id": model.id,
+                "count": key.count,
+                "summa": key.summa
+            }
+            await prixod_tableModel.create(tables);
+            var reagent = {
+                "reagent_id": key.reagent_id,
+                "price": key.price,
+                "doc_id": model.id,
+                "count": key.count,
+                "summa": key.summa,
+                "date_time": Math.floor(new Date().getTime() / 1000),
+                "doc_type": "chiqim"
+            }
+            await register_reagentModel.create(reagent);
         }
-    });
-    if(!model){
-        throw new HttpException(404, "bunday id yoq")
     }
-    res.status(200).send({
-        error: false,
-        error_code: 200,
-        message: 'Malumot o\'chirildi',
-        data: model
-    });
-}
+    #deletePrixodTable = async(doc_id) =>{
+    await prixod_tableModel.destroy({where:{prixod_id: doc_id}})
+    }
+    #deleteRegister_reagent = async(id) => {
+        await register_reagentModel.destroy({where: {doc_id: id}})
+    }
+    delete = async (req, res, next) => {
+        const model = await prixod_Model.destroy({
+            where:{
+                id: req.params.id
+            }
+        });
+
+        await this.#deletePrixodTable(model.id)
+        await this.#deleteRegister_reagent(model.id)
+
+        if(!model){
+            throw new HttpException(404, "bunday id yoq")
+        }
+
+        res.status(200).send({
+            error: false,
+            error_code: 200,
+            message: 'Malumot o\'chirildi',
+            data: model
+        });
+    }
     checkValidation = (req) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             throw new HttpException(400, 'Validation faild', errors);
         }
     }
-
-   
 }
 
 
