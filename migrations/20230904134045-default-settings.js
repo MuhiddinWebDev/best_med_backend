@@ -15,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 let date1 = Date.now()
-let date2 = Date.now() + 86400
+let date2 = Date.now() + 86400 * 4
 
 exports.up = function() {
     return sequelize.query(`
