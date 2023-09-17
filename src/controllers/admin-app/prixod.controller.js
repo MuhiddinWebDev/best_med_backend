@@ -78,7 +78,8 @@ class prixodController {
          "doc_type": "chiqim",
          "type": 2,
          "place": "Prixod",
-         "pastavchik_id": model.pastavchik_id
+         "pastavchik_id": model.pastavchik_id,
+         "filial_id": req.body.filial_id
        }
        
        await register_supplierModel.create(register);
@@ -198,7 +199,7 @@ class prixodController {
     }
 
     #deleteRegister_supplier = async (id) => {
-        await register_supplierModel.destroy({where: {doc_id: id},force: true })
+        await register_supplierModel.destroy({where: {doc_id: id, place: 'Prixod'},force: true })
     }      
 
     checkValidation = (req) => {

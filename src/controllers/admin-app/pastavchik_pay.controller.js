@@ -1,6 +1,5 @@
 
 const HttpException = require('../../utils/HttpException.utils');
-// const status = require('../../utils/status.utils')
 const pastavchik_payModel = require('../../models/pastavchik_pay.model')
 const { validationResult } = require('express-validator');
 const register_supplierModel = require('../../models/register_supplier.model')
@@ -16,6 +15,9 @@ class pastavchik_payController {
         const model = await pastavchik_payModel.findAll({
             include:[
                 {model: pastavchikModel, as: 'pastavchik'}
+            ],
+            order: [
+                ['id', 'DESC'] 
             ]
         });
         res.status(200).send({
@@ -54,9 +56,11 @@ class pastavchik_payController {
             data: model
         });
     }
-   create = async (req, res, next) => {
+
+    create = async (req, res, next) => {
        this.checkValidation(req);
        let filial_id = req.currentUser.filial_id;
+      
        const model = await pastavchik_payModel.create({
           "type": req.body.type,
           "price": req.body.price,
@@ -66,94 +70,111 @@ class pastavchik_payController {
           "filial_id": filial_id,
           "date_time": Math.floor(new Date().getTime() / 1000)
        });
-       var register = {
+      
+       let register = {
         "date_time": Math.floor(new Date().getTime() / 1000),
         "doc_id": model.id,
         "summa": model.price,
         "doc_type": "kirim",
         "type": model.type,
-        "place": "поставщик",
+        "place": "Pastavchik",
         "pastavchik_id": model.pastavchik_id,
         "filial_id": filial_id
       }
       await register_supplierModel.create(register);
-      var kassa = {
+      
+      let kassa = {
         "date_time": Math.floor(new Date().getTime() / 1000),
         "doctor_id": model.id,
         "price": model.price,
         "doc_type": "Chiqim",
         "pay_type": model.type == 0 ? "Naqt" : "Plastik",
         "type": model.type,
-        "place": "поставщик",
-        "filial_id": filial_id
+        "place": "Pastavchik",
+        "filial_id": filial_id,
+        "user_id": req.currentUser.id
       }
-         await register_kassaModel.create(kassa)
+       
+      await register_kassaModel.create(kassa)
        res.status(200).send({
         error: false,
         error_code: 200,
         message: 'Malumotlar qo\'shildi',
         data: model
-    });
-   }
-   update = async (req, res, next) => {
-       this.checkValidation(req);
-       let filial_id = req.currentUser.filial_id;
-    const model = await pastavchik_payModel.findOne({
-        where:{
-            id: req.params.id
-        }
-    });
-    model.type = req.body.type;
-    model.price = req.body.price;
-    model.backlog = req.body.backlog;
-    model.jami_summa = req.body.jami_summa;
-    model.pastavchik_id = req.body.pastavchik_id;
-    model.filial_id = filial_id;
-    model.date_time = Math.floor(new Date().getTime() / 1000);
-    model.save();
-    await register_supplierModel.destroy({
-        where:{
-            doc_id: model.id,
-            place: 'поставщик'
-        }
-    })
-    var register = {
-        "date_time": Math.floor(new Date().getTime() / 1000),
-        "doc_id": model.id,
-        "summa": model.price,
-        "doc_type": "kirim",
-        "type": model.type,
-        "place": "поставщик",
-        "pastavchik_id": model.pastavchik_id,
-        "filial_id": filial_id,
-      }
-      await register_supplierModel.create(register);
-      await register_kassaModel.destroy({
-        where:{
-            doctor_id: model.id,
-            place: 'поставщик'
-        }
-      })
-      var kassa = {
-        "date_time": Math.floor(new Date().getTime() / 1000),
-        "doctor_id": model.id,
-        "price": model.price,
-        "doc_type": "Chiqim",
-        "pay_type": model.type == 0 ? "Naqt" : "Plastik",
-        "type": model.type,
-        "place": "поставщик",
-        "filial_id": filial_id
-      }
-         await register_kassaModel.create(kassa)
-    res.status(200).send({
-        error: false,
-        error_code: 200,
-        message: 'Malumotlar tahrirlandi',
-        data: model
-    });
-}
+       });
+    }
 
- pastavchikHisobot = async(req, res, next) => {
+    update = async (req, res, next) => {
+        this.checkValidation(req);
+        let filial_id = req.currentUser.filial_id;
+        
+        const model = await pastavchik_payModel.findOne({
+            where:{
+                id: req.params.id
+            }
+        });
+        
+        model.type = req.body.type;
+        model.price = req.body.price;
+        model.backlog = req.body.backlog;
+        model.jami_summa = req.body.jami_summa;
+        model.pastavchik_id = req.body.pastavchik_id;
+        model.filial_id = filial_id;
+        model.date_time = Math.floor(new Date().getTime() / 1000);
+        await model.save();
+        
+        await register_supplierModel.destroy({
+            where:{
+                doc_id: model.id,
+                place: 'Pastavchik'
+            },
+            force: true
+        })
+        
+        await register_kassaModel.destroy({
+            where:{
+                doctor_id: model.id,
+                place: 'Pastavchik'
+            },
+            force: true
+        })
+
+        let register = {
+            "date_time": Math.floor(new Date().getTime() / 1000),
+            "doc_id": model.id,
+            "summa": model.price,
+            "doc_type": "kirim",
+            "type": model.type,
+            "place": "Pastavchik",
+            "pastavchik_id": model.pastavchik_id,
+            "filial_id": filial_id,
+        }
+
+        await register_supplierModel.create(register);
+        
+        let kassa = {
+            "date_time": Math.floor(new Date().getTime() / 1000),
+            "doctor_id": model.id,
+            "price": model.price,
+            "doc_type": "Chiqim",
+            "pay_type": model.type == 0 ? "Naqt" : "Plastik",
+            "type": model.type,
+            "place": "Pastavchik",
+            "filial_id": filial_id,
+            "user_id": req.currentUser.id
+        }
+
+        await register_kassaModel.create(kassa)
+        
+        res.status(200).send({
+            error: false,
+            error_code: 200,
+            message: 'Malumotlar tahrirlandi',
+            data: model
+        });
+    }
+
+    pastavchikHisobot = async(req, res, next) => {
     let body = req.body; 
     let query = {}, queryx = {};
         let datetime1 = body.datetime1;
@@ -181,8 +202,9 @@ class pastavchik_payController {
         group: ['pastavchik_id']
     })
     res.send(model)
- } 
-  getPastavchik = async(req, res, next) => {
+    }
+
+    getPastavchik = async(req, res, next) => {
     let prixod = await register_supplierModel.findAll({
         where:{
             pastavchik_id: req.body.pastavchik_id,
@@ -190,6 +212,7 @@ class pastavchik_payController {
         },
         raw: true
     })
+
     let pastavchik = await register_supplierModel.findAll({
             where:{
                 pastavchik_id: req.body.pastavchik_id,
@@ -197,7 +220,9 @@ class pastavchik_payController {
             },
             raw: true
     })
+
     let umumiy, sum1, sum2;
+    
     function prixodSumma(prixod){
         sum1 = 0;
         for(let key of prixod){
@@ -205,7 +230,9 @@ class pastavchik_payController {
         }
         return sum1;
     }
+    
     prixodSumma(prixod);
+    
     function pastavchikSumma(pastavchik){
          sum2 = 0;
          for(let key of pastavchik){
@@ -213,13 +240,15 @@ class pastavchik_payController {
          }
          return sum2;
     }
+
     pastavchikSumma(pastavchik);
     umumiy = sum2 - sum1;
-     res.send({
+    res.send({
         "backlog": umumiy
-     })
-  }
- pastavchikSverka = async(req, res, next) => {
+    })
+    }
+    
+    pastavchikSverka = async(req, res, next) => {
     let body = req.body; 
     let query = {}, queryx = {};
         let datetime1 = body.datetime1;
@@ -244,32 +273,59 @@ class pastavchik_payController {
         group: ['id']
     })
     res.send(model)
- } 
+    } 
 
-delete = async (req, res, next) => {
-  const model = await pastavchik_payModel.destroy({
-        where:{
-          id: req.params.id
+    delete = async (req, res, next) => {
+        try {
+            const model = await pastavchik_payModel.findOne({
+                where: {
+                    id: req.params.id
+                }
+            });
+    
+            if (!model) {
+                throw new HttpException(404, "bunday id yoq")
+            }
+    
+            await register_supplierModel.destroy({
+                where: {
+                    doc_id: model.id,
+                    place: 'Pastavchik'
+                },
+                force: true
+            })
+    
+            await register_kassaModel.destroy({
+                where: {
+                    doctor_id: model.id,
+                    place: 'Pastavchik'
+                },
+                force: true
+            })
+    
+            await pastavchik_payModel.destroy({
+                where: {
+                    id: model.id
+                }
+            });
+    
+            res.status(200).send({
+                error: false,
+                error_code: 200,
+                message: 'Malumot o\'chirildi',
+                data: model
+            });
+        } catch (error) {
+            console.error(error); 
         }
-    });
-    if(!model){
-        throw new HttpException(404, "bunday id yoq")
     }
-    res.status(200).send({
-        error: false,
-        error_code: 200,
-        message: 'Malumot o\'chirildi',
-        data: model
-    });
-}
+    
     checkValidation = (req) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             throw new HttpException(400, 'Validation faild', errors);
         }
-    }
-
-   
+    }  
 }
 
 
