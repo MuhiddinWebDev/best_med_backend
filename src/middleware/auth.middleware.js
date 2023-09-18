@@ -42,7 +42,7 @@ const auth = (...roles) => {
             let currentDay = new Date().toISOString().split("T")[0]
             let appDate = new Date(checkExpiredApp[0].date2 * 1000).toISOString().split("T")[0]
             if(currentDay > appDate) {
-                throw new HttpException(402, 'App expired');
+                throw new HttpException(412, 'App expired');
             }
             
             // if the user has permissions
