@@ -10,11 +10,14 @@ class SettingsController {
                 ['id', 'ASC']
             ],
         });
+    
+        const lastElement = ModelList[ModelList.length - 1]; // Get the last element
+    
         res.send({
             "error": false,
             "error_code": 200,
             "message": "Malumotlar chiqdi",
-            data: ModelList
+            data: lastElement // Send only the last element
         });
     };
 
@@ -86,6 +89,5 @@ class SettingsController {
             throw new HttpException(400, 'Validation faild', errors);
         }
     }
-
 }
 module.exports = new SettingsController;
