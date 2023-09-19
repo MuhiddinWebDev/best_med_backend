@@ -52,7 +52,7 @@ const filialModel = require('../../models/filial.model');
 
 class RegistrationController {
     q=[];
-  ArxivgaOlish = async (req, res, next) => {
+    ArxivgaOlish = async (req, res, next) => {
     try{
      let qarz  =  await ModelModel.findAll({
         where:{
@@ -95,9 +95,8 @@ class RegistrationController {
        console.log(err);
     }
        // res.send('okey');
-   };
-
-   statsionar = async(req, res, next) => {
+    };
+    statsionar = async(req, res, next) => {
     try{
         // console.log("salom");
         let model = await ModelModel.findAll({
@@ -150,7 +149,7 @@ class RegistrationController {
     catch(err){
         console.log(err);
     }
-} 
+    } 
     getAll = async (req, res, next) => {
         const model = await ModelModel.findAll({
             include:[ 
@@ -343,7 +342,6 @@ class RegistrationController {
         await QueueModel.destroy({where:{datetime:{[Op.lte]:time}}});
         res.send('deleted');
     };
-    
     getPechat = async (req, res, next) => {
         this.checkValidation(req);
         const Prixod = await QueueModel.findAll({
@@ -403,7 +401,6 @@ class RegistrationController {
         }
         res.send(Prixod);
     };
-
     create = async (req, res, next) => {
         this.checkValidation(req);
         let filial_id = req.currentUser.filial_id;
@@ -470,7 +467,6 @@ class RegistrationController {
         }
 
     };
-
     #directAdd = async(model, insert = true) => {
         console.log('direct running code')
         if(!insert){
@@ -542,7 +538,6 @@ class RegistrationController {
 
         res.send('Has been deleted' );
     };
-
     checkValidation = (req) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
@@ -601,7 +596,6 @@ class RegistrationController {
                }
         }
     }
-
     #inspectionadd = async(model,  registration_inspection, insert = true) => {
         if(!insert){
             await this.#deleteInspection(model.id);
@@ -726,7 +720,6 @@ class RegistrationController {
 
         }
     }
-    
     #doctoradd = async(model, registration_doctor, insert = true) => {
         if(!insert){
             await this.#deletedoctor(model.id);
@@ -748,8 +741,9 @@ class RegistrationController {
                 "doctor_id": element.doctor_id,
                 "filial_id": element.filial_id == null ? 0 : element.filial_id,
                 "doc_type": 'kirim',
-                 "place": "Регистратион",
-                 "comment": ""
+                // "percent": 
+                "place": "Регистратион",
+                "comment": ""
             }
             var {Registration_recipe, register_mkb,...data} = element;
             console.log(element, "doctorrrrrrrr");
@@ -765,7 +759,7 @@ class RegistrationController {
             };
             const models = await Registration_doctorModel.create(news);
                     if(model.backlog == 0){
-                      await  RegisterDoctorModel.create(doctor)
+                        await  RegisterDoctorModel.create(doctor)
                     }
             function isHave(item) { 
                 return item.room_id == user.room_id&&item.patient_id == model.patient_id;
@@ -932,7 +926,6 @@ class RegistrationController {
     #deleteFiles = async(doc_id) => {
         await Registration_filesModel.destroy({where: {registration_id: doc_id}})
     }
-
     palata = async (req, res, next) => {
         let query = {}, query_begin = {}, query_end = {}, body = req.body;
         let data1 = body.date_to;
@@ -1058,7 +1051,6 @@ class RegistrationController {
             });  
         }
     };
-    
     searchs = async (req, res, next) => {
         let ModelList = await ModelModel.findAll({
             include:[ 

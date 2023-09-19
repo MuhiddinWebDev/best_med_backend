@@ -16,7 +16,10 @@ class PatientController {
                 {model: RegionModel, as: 'region', attributes: ['id', 'name']},
                 {model: districtModel, as: 'district', attributes: ['id', 'name']}
             ],
-            limit: 100
+            limit: 100,
+            order: [
+                ['id', 'DESC']
+            ]
         });
         res.status(200).send({
             error: false,
@@ -25,7 +28,6 @@ class PatientController {
             data: model
         });
     }
-
     getOne = async (req, res, next) => {
         this.checkValidation(req);
         const model = await PatientModel.findOne({
@@ -50,7 +52,7 @@ class PatientController {
             data: model
         });
     }
-   create = async (req, res, next) => {
+    create = async (req, res, next) => {
        this.checkValidation(req);
        const model = await PatientModel.create({
         'fullname': req.body.fullname,
@@ -74,8 +76,8 @@ class PatientController {
         message: 'Malumotlar qo\'shildi',
         data: model
     });
-   }
-   update = async (req, res, next) => {
+    }
+    update = async (req, res, next) => {
        this.checkValidation(req);
     const model = await PatientModel.findOne({
         where:{
@@ -103,53 +105,50 @@ class PatientController {
         message: 'Malumotlar tahrirlandi',
         data: model
     });
-}
-   search = async (req, res, next) => {
-    let data = await PatientModel.find(
-        {
-            "$or": [
-                {"name": {$regex: req.params.key}}
-            ]
-        }
-    )
-    //   const filters = req.query;
-    
-    //   const FilteredUser = Patient.filter(user => {
-    //       let isInvalid = true;
-    //        for(let key in filters){
-    //         console.log(key, user[key], filters[key]);
-    //         isInvalid = isInvalid && user[key] == filters[key]
-    //        }
-    //        return isInvalid
-    //   })
-    //   res.send(FilteredUser)
-    res.send(data)
-   }
-
-delete = async (req, res, next) => {
-const model =    await PatientModel.destroy({
-        where:{
-          id: req.params.id
-        }
-    });
-    if(!model){
-        throw new HttpException(404, "bunday id yoq")
     }
-    res.status(200).send({
-        error: false,
-        error_code: 200,
-        message: 'Malumotlar o\'chirildi',
-        data: model
-    });
-}
+    search = async (req, res, next) => {
+        let data = await PatientModel.find(
+            {
+                "$or": [
+                    {"name": {$regex: req.params.key}}
+                ]
+            }
+        )
+        //   const filters = req.query;
+        
+        //   const FilteredUser = Patient.filter(user => {
+        //       let isInvalid = true;
+        //        for(let key in filters){
+        //         console.log(key, user[key], filters[key]);
+        //         isInvalid = isInvalid && user[key] == filters[key]
+        //        }
+        //        return isInvalid
+        //   })
+        //   res.send(FilteredUser)
+        res.send(data)
+    }
+    delete = async (req, res, next) => {
+    const model =    await PatientModel.destroy({
+            where:{
+            id: req.params.id
+            }
+        });
+        if(!model){
+            throw new HttpException(404, "bunday id yoq")
+        }
+        res.status(200).send({
+            error: false,
+            error_code: 200,
+            message: 'Malumotlar o\'chirildi',
+            data: model
+        });
+    }
     checkValidation = (req) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             throw new HttpException(400, 'Validation faild', errors);
         }
-    }
-
-   
+    }   
 }
 
 
