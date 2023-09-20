@@ -87,7 +87,7 @@ class RegistrationController {
             message: "Malumot arhivga olindi"
         })
     }else{
-        console.log("pul tolamagan");
+        // console.log("pul tolamagan");
         // throw new HttpException(401, "pul tolanmagan")
     }
     }
@@ -468,7 +468,7 @@ class RegistrationController {
 
     };
     #directAdd = async(model, insert = true) => {
-        console.log('direct running code')
+        // console.log('direct running code')
         if(!insert){
           await this.#deleteDirect(model.id)
         }
@@ -741,9 +741,8 @@ class RegistrationController {
                 "doctor_id": element.doctor_id,
                 "filial_id": element.filial_id == null ? 0 : element.filial_id,
                 "doc_type": 'kirim',
-                // "percent": 
                 "place": "Регистратион",
-                "comment": ""
+                "comment": "",
             }
             var {Registration_recipe, register_mkb,...data} = element;
             console.log(element, "doctorrrrrrrr");
@@ -783,7 +782,7 @@ class RegistrationController {
                 }
             }
             await this.#recieptadd(models, element.registration_recipe, false); 
-            await this.#tashxisAdd(model,models, element.register_mkb, false)
+            await this.#tashxisAdd(model, models, element.register_mkb, false)
         }
     }
     #recieptadd = async(model, registration_recipe, insert = true) => {
@@ -970,7 +969,6 @@ class RegistrationController {
                     else{
                         value.dataValues.status = false;
                     }
-                    // console.log("if4", value.dataValues);
                 })
            }
            else{
