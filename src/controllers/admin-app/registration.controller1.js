@@ -58,7 +58,7 @@ class RegistrationController {
         where:{
             id: req.params.id,
             backlog: 0, 
-            status: 'complate'
+            status: 'complete'
         }
      });
     if(qarz.length > 0){
@@ -69,10 +69,10 @@ class RegistrationController {
             await db.query(`INSERT INTO registration_files_arxiv SELECT * FROM registration_files where registration_id = ${req.params.id}`);
             await db.query(`INSERT INTO registration_recipe_arxiv SELECT * FROM registration_recipe where registration_id = ${req.params.id}`);
             await db.query(`INSERT INTO registration_doctor_arxiv SELECT * FROM registration_doctor where registration_id = ${req.params.id}`);
-            await db.query(`INSERT INTO registration_arxiv SELECT * FROM registration where backlog = 0 and status = 'complate' and id = ${req.params.id}`);
+            await db.query(`INSERT INTO registration_arxiv SELECT * FROM registration where backlog = 0 and status = 'complete' and id = ${req.params.id}`);
             await db.query(`INSERT INTO registration_pay_arxiv SELECT * FROM registration_pay where registration_id = ${req.params.id}`);
             await db.query(`INSERT INTO registration_palata_arxiv SELECT * FROM registration_palata where registration_id = ${req.params.id}`);
-            await db.query(`DELETE from registration where backlog = 0 and status = 'complate' and id = ${req.params.id}`);
+            await db.query(`DELETE from registration where backlog = 0 and status = 'complete' and id = ${req.params.id}`);
             await db.query(`DELETE from registration_recipe where registration_id = ${req.params.id}`);
             await db.query(`DELETE from registration_doctor where registration_id = ${req.params.id}`);
             await db.query(`DELETE from registration_inspection_child where registration_id = ${req.params.id}`);
@@ -652,10 +652,10 @@ class RegistrationController {
                     this.q.push({"room_id":user.room_id,"patient_id":model.patient_id,"number":0,"date_time":Math.floor(new Date().getTime() / 1000),"status":data.status});
                 }
                 else if(data.status!=have.status){
-                    if(data.status!='complate'){
+                    if(data.status!='complete'){
                         var index=this.q.findIndex(isHave);
                         this.q[index].status=have.status;
-                    }else if(have.status!='complate'){
+                    }else if(have.status!='complete'){
                         var index=this.q.findIndex(isHave);
                         this.q[index].status=have.status;
                     }
@@ -773,10 +773,10 @@ class RegistrationController {
                     "status":data.status
                 });
             }else if(data.status!=have.status){
-                if(data.status!='complate'){
+                if(data.status!='complete'){
                     var index=this.q.findIndex(isHave);
                     this.q[index].status=have.status;
-                } else if(have.status!='complate'){
+                } else if(have.status!='complete'){
                     var index=this.q.findIndex(isHave);
                     this.q[index].status=have.status;
                 }
@@ -836,7 +836,7 @@ class RegistrationController {
             if(!insert){
                 var has=await QueueModel.findOne({
                     where:{
-                        status:{[Op.not]:'complate'},
+                        status:{[Op.not]:'complete'},
                         room_id: element.room_id,
                         patient_id: element.patient_id
                     }
@@ -846,7 +846,7 @@ class RegistrationController {
                         has.status=element.status;
                         await has.save();
                     }
-                }else if(element.status!='complate') {
+                }else if(element.status!='complete') {
                     var que=await QueueModel.findOne({
                         where:{ 
                             room_id: element.room_id,
@@ -877,7 +877,6 @@ class RegistrationController {
                     element.number=1;
                 }
                 await QueueModel.create(element); 
-
             }
         } 
         this.q=[];
@@ -1458,33 +1457,51 @@ class RegistrationController {
     queueAll = async (req, res, next) => {
         const model = await QueueModel.findAll({
             where:{
-                status:{[Op.not]:'complate'}
+                status:{
+                    [Op.not]:'complete'
+                },
+                room_id: {
+                    [Op.not]: 0
+                }
             },
             include:[
-                {model: RoomModel, as: 'room', attributes: ['name'],
-            include:[
-                {model: UserModel, as: 'users', attributes: ['doctor_id'],
-                include:[
-                    {model: DoctorModel, as: 'doctor', attributes: ['name']}
-                ]
-            }
-            ]
-            },
-                {model: PatientModel, as: 'patient', attributes: ['fullname']},
+                {
+                    model: RoomModel, 
+                    as: 'room', 
+                    attributes: ['name'],
+                    include:[
+                        {   
+                            model: UserModel, 
+                            as: 'users', 
+                            attributes: ['doctor_id'],
+                        include:[
+                            {
+                                model: DoctorModel, 
+                                as: 'doctor', 
+                                attributes: ['name']
+                            }
+                        ]
+                    }
+                    ]
+                },
+                {
+                    model: PatientModel, 
+                    as: 'patient', 
+                    attributes: ['fullname']
+                },
             ],
-            group:['room_id'],
-            limit: 100,
             order: [
-                ['number', 'ASC']
+                ['number', 'ASC'],
+                ['room_id', 'ASC'],
             ],
         });
-         res.send({
+        
+        res.send({
             error_code: 200,
             error: false,
             message: "malumotlar chiqdi",
             data: model
-         })
-        
+        })
     }
     statsionarHisobot = async(req, res, next) => {
         let query = {};
