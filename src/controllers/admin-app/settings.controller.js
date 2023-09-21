@@ -22,17 +22,19 @@ class SettingsController {
     };
 
     getById = async (req, res, next) => {
-        const Settings = await SettingsModel.findOne({
-            where:{ id: req.params.id }
-        });
-        if (Settings === null) {
-            throw new HttpException(404, 'not found');
+        const settings = await SettingsModel.findAll();
+
+        if (settings.length === 0) {
+          throw new HttpException(404, 'not found');
         }
+      
+        const lastSetting = settings[settings.length - 1];
+
         res.send({
             "error": false,
             "error_code": 200,
             "message": "Malumotlar chiqdi",
-            data: Settings
+            data: lastSetting
         });
     };
 
@@ -47,32 +49,41 @@ class SettingsController {
     };
 
     update = async (req, res, next) => {
-        this.checkValidation(req);
-        let {...data} = req.body;
-        let id = parseInt(req.params.id);
-        
-        let model = await SettingsModel.findOne({where : {id: id}})
+        try {
+            // Validate input
+            this.checkValidation(req);
 
-        if (!model) {
-            throw new HttpException(404, 'data not found');
-        } 
-        try{
-            model.name = data.name;
-            model.logo = data.logo;
-            model.date1 = Number(data.date1);
-            model.date2 = Number(data.date2);
-            model.quote = data.quote;
-            model.header_right = data.header_right;
-            model.header_left = data.header_left;
-            await model.save();
-        }catch(e){
-            if(e instanceof ValidationError){
-                res.status(404).send(e.errors[0].message);
-                return;
+            // Extract data from request body
+            const { name, logo, date1, date2, quote, header_right, header_left } = req.body;
+
+            // Find the model
+            const models = await SettingsModel.findAll();
+            if (models.length === 0) {
+                throw new HttpException(404, 'Not found');
             }
-            throw new HttpException(500, 'Something went wrong');
+            const modelToUpdate = models[models.length - 1];
+
+            // Update model properties
+            modelToUpdate.name = name;
+            modelToUpdate.logo = logo;
+            modelToUpdate.date1 = Number(date1);
+            modelToUpdate.date2 = Number(date2);
+            modelToUpdate.quote = quote;
+            modelToUpdate.header_right = header_right;
+            modelToUpdate.header_left = header_left;
+
+            // Save the updated model
+            await modelToUpdate.save();
+
+            res.send(modelToUpdate);
+        } catch (e) {
+            if (e instanceof ValidationError) {
+                res.status(400).send(e.errors[0].message);
+            } else {
+                console.error(e);
+                res.status(500).send('Something went wrong');
+            }
         }
-        res.send(model);
     };
 
     delete = async (req, res, next) => {
