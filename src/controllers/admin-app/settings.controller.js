@@ -58,7 +58,6 @@ class SettingsController {
 
             // Find the model
             const models = await SettingsModel.findAll();
-            console.log(models)
             
             if (models.length == 0) {
                 throw new HttpException(404, 'Not found');
