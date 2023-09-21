@@ -58,9 +58,12 @@ class SettingsController {
 
             // Find the model
             const models = await SettingsModel.findAll();
-            if (models.length === 0) {
+            console.log(models)
+            
+            if (models.length == 0) {
                 throw new HttpException(404, 'Not found');
             }
+          
             const modelToUpdate = models[models.length - 1];
 
             // Update model properties
