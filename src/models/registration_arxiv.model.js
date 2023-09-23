@@ -54,7 +54,7 @@ type_service : {
     allowNull: false
 },
 complaint : {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
 },
 summa : {
     type: DataTypes.DECIMAL(30),
