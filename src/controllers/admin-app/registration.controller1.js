@@ -613,7 +613,7 @@ class RegistrationController {
             data.registration_id=model.id;
                  if(model.backlog == 0){
                     let date_time =Math.floor(new Date().getTime() / 1000);
-                   let  tekshiruv = {
+                    let  tekshiruv = {
                        "date_time": date_time,
                        "type": item.type,
                        "price": Math.floor((item.price * item.inspection.percent_bonus)/100),

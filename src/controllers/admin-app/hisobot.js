@@ -171,7 +171,6 @@ class HisobotController {
     inspection = async (req, res, next) => {
         let query = {}, queryx = {};
         let body = req.body;
-        console.log(body);
         let datetime1 = body.datetime1;
         let datetime2 = body.datetime2;
         query.date_time = {
@@ -604,7 +603,6 @@ class HisobotController {
         })
         res.send(result);
     }
-
 
     BassenSverka = async (req, res, next) => {
         let result, results;
