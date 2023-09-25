@@ -1458,7 +1458,7 @@ class RegistrationController {
         const model = await QueueModel.findAll({
             where:{
                 status:{
-                    [Op.not]:'complete'
+                    [Op.not]: 'complete'
                 },
                 room_id: {
                     [Op.not]: 0
@@ -1494,6 +1494,7 @@ class RegistrationController {
                 ['number', 'ASC'],
                 ['room_id', 'ASC'],
             ],
+            group:['room_id'],
         });
         
         res.send({
