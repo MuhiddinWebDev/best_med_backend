@@ -22,6 +22,7 @@ class directController {
       data: model,
     });
   };
+
   getAll = async (req, res, next) => {
     const model = await directModel.findAll({
       include: [{ model: filialModel, as: "filial" }],
@@ -33,7 +34,7 @@ class directController {
       data: model,
     });
   };
-
+  
   getOne = async (req, res, next) => {
     this.checkValidation(req);
     const model = await directModel.findOne({
@@ -52,12 +53,14 @@ class directController {
       data: model,
     });
   };
+  
   create = async (req, res, next) => {
     this.checkValidation(req);
     const model = await directModel.create({
       name: req.body.name,
       bonus: req.body.bonus,
       filial_id: req.body.filial_id,
+      med_id: 0
     });
     res.status(200).send({
       error: false,
@@ -66,6 +69,7 @@ class directController {
       data: model,
     });
   };
+  
   update = async (req, res, next) => {
     this.checkValidation(req);
     const model = await directModel.findOne({
@@ -84,6 +88,7 @@ class directController {
       data: model,
     });
   };
+  
   delete = async (req, res, next) => {
     const model = await directModel.destroy({
       where: {
@@ -100,6 +105,7 @@ class directController {
       data: model,
     });
   };
+  
   checkValidation = (req) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
