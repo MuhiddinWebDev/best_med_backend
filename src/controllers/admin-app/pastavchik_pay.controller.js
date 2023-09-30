@@ -68,6 +68,7 @@ class pastavchik_payController {
           "jami_summa": req.body.jami_summa,
           "pastavchik_id": req.body.pastavchik_id,
           "filial_id": filial_id,
+          "comment": req.body.comment,
           "date_time": Math.floor(new Date().getTime() / 1000)
        });
       
@@ -77,10 +78,12 @@ class pastavchik_payController {
         "summa": model.price,
         "doc_type": "kirim",
         "type": model.type,
-        "place": "Pastavchik",
+        "comment": model.comment,
+        "place": "Паставшик",
         "pastavchik_id": model.pastavchik_id,
         "filial_id": filial_id
       }
+
       await register_supplierModel.create(register);
       
       let kassa = {
@@ -90,8 +93,9 @@ class pastavchik_payController {
         "doc_type": "Chiqim",
         "pay_type": model.type == 0 ? "Naqt" : "Plastik",
         "type": model.type,
-        "place": "Pastavchik",
+        "place": "Паставшик",
         "filial_id": filial_id,
+        "comment": model.comment,
         "user_id": req.currentUser.id
       }
        
@@ -117,6 +121,7 @@ class pastavchik_payController {
         model.type = req.body.type;
         model.price = req.body.price;
         model.backlog = req.body.backlog;
+        model.comment = req.body.comment;
         model.jami_summa = req.body.jami_summa;
         model.pastavchik_id = req.body.pastavchik_id;
         model.filial_id = filial_id;
@@ -126,7 +131,7 @@ class pastavchik_payController {
         await register_supplierModel.destroy({
             where:{
                 doc_id: model.id,
-                place: 'Pastavchik'
+                place: 'Паставшик'
             },
             force: true
         })
@@ -134,7 +139,7 @@ class pastavchik_payController {
         await register_kassaModel.destroy({
             where:{
                 doctor_id: model.id,
-                place: 'Pastavchik'
+                place: 'Паставшик'
             },
             force: true
         })
@@ -145,9 +150,10 @@ class pastavchik_payController {
             "summa": model.price,
             "doc_type": "kirim",
             "type": model.type,
-            "place": "Pastavchik",
+            "place": "Паставшик",
             "pastavchik_id": model.pastavchik_id,
             "filial_id": filial_id,
+            "comment": model.comment,
         }
 
         await register_supplierModel.create(register);
@@ -159,9 +165,10 @@ class pastavchik_payController {
             "doc_type": "Chiqim",
             "pay_type": model.type == 0 ? "Naqt" : "Plastik",
             "type": model.type,
-            "place": "Pastavchik",
+            "place": "Паставшик",
             "filial_id": filial_id,
-            "user_id": req.currentUser.id
+            "user_id": req.currentUser.id,
+            "comment": model.comment,
         }
 
         await register_kassaModel.create(kassa)
@@ -189,7 +196,7 @@ class pastavchik_payController {
         }
     let model = await register_supplierModel.findAll({
         attributes : [ 
-            'id', 'doc_id', "type", "date_time", "doc_type", "summa", "pastavchik_id", "place",
+            'id', 'doc_id', "type", "date_time", "doc_type", "summa", "pastavchik_id", "place", "comment",
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time < " + datetime1 + " THEN register_supplier.summa * power(-1, 'type') ELSE 0 END)"), 'total'],
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'kirim' THEN register_supplier.summa ELSE 0 END)"), 'total_kirim'],
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'chiqim' THEN register_supplier.summa ELSE 0 END)"), 'total_chiqim'],
@@ -208,7 +215,7 @@ class pastavchik_payController {
     let prixod = await register_supplierModel.findAll({
         where:{
             pastavchik_id: req.body.pastavchik_id,
-            place: 'Prixod'
+            place: 'Приход'
         },
         raw: true
     })
@@ -216,7 +223,7 @@ class pastavchik_payController {
     let pastavchik = await register_supplierModel.findAll({
             where:{
                 pastavchik_id: req.body.pastavchik_id,
-                place: 'Pastavchik'
+                place: 'Паставшик'
             },
             raw: true
     })
@@ -263,7 +270,7 @@ class pastavchik_payController {
         }
     let model = await register_supplierModel.findAll({
         attributes : [ 
-            'id', 'pastavchik_id', "type", "date_time", "doc_type", "summa", "doc_id", "place",
+            'id', 'pastavchik_id', "type", "date_time", "doc_type", "summa", "doc_id", "place", "comment",
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time < " + datetime1 + " THEN register_supplier.summa * power(-1, 'type') ELSE 0 END)"), 'total'],
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'kirim' THEN register_supplier.summa ELSE 0 END)"), 'total_kirim'],
             [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'chiqim' THEN register_supplier.summa ELSE 0 END)"), 'total_chiqim'],
@@ -290,7 +297,7 @@ class pastavchik_payController {
             await register_supplierModel.destroy({
                 where: {
                     doc_id: model.id,
-                    place: 'Pastavchik'
+                    place: 'Паставшик'
                 },
                 force: true
             })
@@ -298,7 +305,7 @@ class pastavchik_payController {
             await register_kassaModel.destroy({
                 where: {
                     doctor_id: model.id,
-                    place: 'Pastavchik'
+                    place: 'Паставшик'
                 },
                 force: true
             })

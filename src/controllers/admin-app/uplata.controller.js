@@ -22,7 +22,6 @@ class UplateController {
             data: model
         });
     }
-
     getOne = async (req, res, next) => {
         this.checkValidation(req);
         const model = await UplataModel.findOne({
@@ -40,12 +39,12 @@ class UplateController {
             data: model
         });
     }
-   create = async (req, res, next) => {
+    create = async (req, res, next) => {
     let data =Math.floor(new Date().getTime() / 1000);
        this.checkValidation(req);
        const model = await UplataModel.create({
         "name": req.body.name,
-        "user_id": req.body.user_id,
+        "user_id": req.currentUser.id,
         "doctor_id": req.body.doctor_id,
         "type": req.body.type,
         "date_time": req.body.date_time,
@@ -62,8 +61,8 @@ class UplateController {
           "date_time": data,
           "type": req.body.type,
           "price": req.body.price,
-          "filial_id": req.currentUser.dataValues.filial_id,
-          "user_id": req.currentUser.dataValues.id,
+          "filial_id": req.currentUser.filial_id,
+          "user_id": req.currentUser.id,
           "pay_type": pay_type,
           "doc_type": "Chiqim",
           "doctor_id": model.id,
@@ -100,8 +99,8 @@ class UplateController {
         message: 'Malumotlar qo\'shildi',
         data: model
     });
-   }
-   update = async (req, res, next) => {
+    }
+    update = async (req, res, next) => {
     let data =Math.floor(new Date().getTime() / 1000);
        this.checkValidation(req);
     const model = await UplataModel.findOne({
@@ -110,7 +109,7 @@ class UplateController {
         }
     });
     model.name = req.body.name;
-    model.user_id = req.body.user_id;
+    model.user_id = req.currentUser.id;
     model.doctor_id = req.body.doctor_id;
     model.price = req.body.price;
     model.type = req.body.type;
@@ -134,8 +133,8 @@ class UplateController {
           "date_time": data,
           "type": req.body.type,
           "price": req.body.price,
-          "filial_id": req.currentUser.dataValues.filial_id,
-          "user_id": req.currentUser.dataValues.id,
+          "filial_id": req.currentUser.filial_id,
+          "user_id": req.currentUser.id,
           "pay_type": pay_type,
           "doc_type": "Chiqim",
           "doctor_id": model.id,
@@ -153,7 +152,7 @@ class UplateController {
                     "type": req.body.type,
                     "price": req.body.price,
                     "doc_id": model.id, 
-                    "doctor_id": req.currentUser.dataValues.doctor_id,
+                    "doctor_id": req.currentUser.doctor_id,
                     "doc_type": 'Chiqim',
                     "place": "Оплата"
              })
@@ -170,8 +169,8 @@ class UplateController {
                     "price": req.body.price,
                     "doc_id": model.id,
                     "user_id": req.body.user_id,
-                    "inspection_id": req.currentUser.dataValues.inspection_category_id,
-                    "inspection_category": req.currentUser.dataValues.inspection_category_id,
+                    "inspection_id": req.currentUser.inspection_category_id,
+                    "inspection_category": req.currentUser.inspection_category_id,
                     "skidka": 0,
                     "doc_type": 'Chiqim',
                     "place": "Оплата"
@@ -183,8 +182,8 @@ class UplateController {
         message: 'Malumotlar tahrirlandi',
         data: model
     });
-}
-delete = async (req, res, next) => {
+    }
+    delete = async (req, res, next) => {
   const model = await UplataModel.destroy({
         where:{
           id: req.params.id
@@ -199,15 +198,13 @@ delete = async (req, res, next) => {
         message: 'Malumot o\'chirildi',
         data: model
     });
-}
+    }
     checkValidation = (req) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             throw new HttpException(400, 'Validation faild', errors);
         }
     }
-
-   
 }
 
 

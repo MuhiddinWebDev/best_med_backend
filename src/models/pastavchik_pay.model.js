@@ -27,6 +27,11 @@ price: {
 backlog: {
   type: DataTypes.DECIMAL
 },
+comment: {
+  type: DataTypes.TEXT,
+  allowNull: true,
+  defaultValue: ""
+},
 jami_summa: {
   type: DataTypes.DECIMAL
 },

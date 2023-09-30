@@ -451,7 +451,7 @@ class HisobotController {
         }
         let model = await register_supplierModel.findAll({
             attributes: [
-                'id', 'pastavchik_id', "type", "date_time", "doc_type", "summa", "doc_id", "place",
+                'id', 'pastavchik_id', "type", "date_time", "doc_type", "summa", "doc_id", "place", "comment",
                 [sequelize.literal("SUM(CASE WHEN register_supplier.date_time < " + datetime1 + " THEN register_supplier.summa * power(-1, 'type') ELSE 0 END)"), 'total'],
                 [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'kirim' THEN register_supplier.summa ELSE 0 END)"), 'total_kirim'],
                 [sequelize.literal("SUM(CASE WHEN register_supplier.date_time >= " + datetime1 + " and register_supplier.date_time <= " + datetime2 + " AND register_supplier.doc_type = 'chiqim' THEN register_supplier.summa ELSE 0 END)"), 'total_chiqim'],

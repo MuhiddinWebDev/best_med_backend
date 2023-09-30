@@ -41,6 +41,11 @@ pastavchik_id:{
   type: DataTypes.INTEGER,
   allowNull: false
 },
+comment: {
+  type: DataTypes.TEXT,
+  allowNull: true,
+  defaultValue: ""
+},
 filial_id:{
   type: DataTypes.INTEGER
 }

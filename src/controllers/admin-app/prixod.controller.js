@@ -116,7 +116,7 @@ class prixodController {
             "summa": model.umumiy_summa,
             "doc_type": "chiqim",
             "type": 2,
-            "place": "Prixod",
+            "place": "Приход",
             "pastavchik_id": model.pastavchik_id
         }
         
