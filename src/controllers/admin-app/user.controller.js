@@ -18,7 +18,7 @@ const settingsModel = require('../../models/settings.model');
 class UserController {
     userLogin = async (req, res, next) => {
         this.checkValidation(req);
-        const {  password, login,filial_id } = req.body;
+        const {  password, login, filial_id } = req.body;
         
         const model = await UserModel.findOne({
             include:[

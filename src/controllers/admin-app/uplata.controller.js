@@ -67,7 +67,7 @@ class UplateController {
           "pay_type": pay_type,
           "doc_type": "Chiqim",
           "doctor_id": model.id,
-          "place": "уплата"
+          "place": "Тўлов"
        })
             if(req.currentUser.dataValues.doctor_id != 0){
                 register_doctorModel.create({
@@ -120,7 +120,7 @@ class UplateController {
         where:{
            doctor_id: req.params.id,
            doc_type: 'Chiqim',
-           place: 'уплата'
+           place: 'Тўлов'
         }
     })
        let pay_type = null;
@@ -139,7 +139,7 @@ class UplateController {
           "pay_type": pay_type,
           "doc_type": "Chiqim",
           "doctor_id": model.id,
-          "place": "уплата"
+          "place": "Тўлов"
        })
             if(req.currentUser.dataValues.doctor_id != 0){
                 await register_doctorModel.destroy({

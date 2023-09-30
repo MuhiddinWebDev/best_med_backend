@@ -486,7 +486,7 @@ class RegistrationController {
                 "doc_id": model.id,
                 "doc_type": "kirim",
                 "comment": "",
-                "place": "Регистратион",
+                "place": "Регистрация",
                 "direct_id": model.direct_id,
                 "filial_id": direct.filial_id
              }
@@ -512,7 +512,7 @@ class RegistrationController {
         "doc_id": direc.doc_id,
         "doc_type": "kirim",
         "comment": "",
-        "place": "Регистратион",
+        "place": "Регистрация",
         "direct_id": direct != null ? direct.med_id : 0
     }
     await registerMedDirectModel.create(med);
@@ -591,7 +591,7 @@ class RegistrationController {
                     "price": element.summa,    
                     "type": type,
                     "doc_type": 'Kirim',
-                    "place": "регистратион"
+                    "place": "Регистрация"
                 })
                }
         }
@@ -623,7 +623,7 @@ class RegistrationController {
                        "inspection_category": item.category_id,
                        "skidka": item.skidka,
                        "doc_type": 'kirim',
-                       "place": "Регистратион",
+                       "place": "Регистрация",
                        "comment": "",
                        "filial_id": item.filial_id == null ? 0 : item.filial_id,
                      }
@@ -741,7 +741,7 @@ class RegistrationController {
                 "doctor_id": element.doctor_id,
                 "filial_id": element.filial_id == null ? 0 : element.filial_id,
                 "doc_type": 'kirim',
-                "place": "Регистратион",
+                "place": "Регистрация",
                 "comment": "",
             }
             var {Registration_recipe, register_mkb,...data} = element;
@@ -1290,7 +1290,7 @@ class RegistrationController {
               await Register_kassaModel.destroy({
                   where:{
                       doctor_id: req.params.id,
-                      place: 'регистратион'
+                      place: 'Регистрация'
                   }
               })
               const model =  await ModelModel.destroy({ 

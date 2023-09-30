@@ -16,10 +16,9 @@ PillModel.init({
     primaryKey: true
   },
   name: {
-    type: DataTypes.STRING(300),
+    type: DataTypes.STRING(250),
     allowNull: false
   },
-
 }, {
   sequelize,
   modelName: 'pill',

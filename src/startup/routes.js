@@ -9,6 +9,7 @@ const doctorRouter = require('../routes/admin-app/doctor.route');
 const patientRouter = require('../routes/admin-app/patient.route');
 const pillRouter = require('../routes/admin-app/pill.route');
 const queueRouter = require('../routes/admin-app/queue.route');
+const payDirectRouter = require('../routes/admin-app/pay_direct.route');
 const regionRouter = require('../routes/admin-app/region.route');
 const inspectionRouter = require('../routes/admin-app/inspection.route');
 const Doctor_templateRouter = require('../routes/admin-app/doctor_template.route');
@@ -88,6 +89,7 @@ module.exports = function(app){
         app.use(`/api/v1/admin-app/hisobot`, Hisobot);
         app.use(`/api/v1/admin-app/bassen`, Bassen);
         app.use(`/api/v1/admin-app/settings`, settingsRouter);
+        app.use(`/api/v1/admin-app/pay-direct`, payDirectRouter);
 
         app.use(`/api/v1/admin-app`, express.static('upload'));
 
