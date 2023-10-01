@@ -728,11 +728,29 @@ class RegistrationController {
                 },
                 raw: true
             })
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
+            console.log(user.percent)
             var date_time = Math.floor(new Date().getTime() / 1000);
             let doctor = {
                 "date_time": date_time,
                 "type": 0,
-                "price": Math.floor((user.dataValues.percent * element.price)/100),
+                "price": Math.floor((user.percent * element.price) / 100),
                 "doc_id": model.id, 
                 "doctor_id": element.doctor_id,
                 "filial_id": element.filial_id == null ? 0 : element.filial_id,
