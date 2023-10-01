@@ -746,6 +746,7 @@ class RegistrationController {
             }
             var {Registration_recipe, register_mkb,...data} = element;
             console.log(element, "doctorrrrrrrr");
+            console.log(data.price)
             var news={
                 "doctor_id":element.doctor_id,
                 "registration_id":model.id,

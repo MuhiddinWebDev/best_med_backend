@@ -23,7 +23,7 @@ register_doctorModel.init({
    type: DataTypes.STRING(400)
  },
  price:{
-   type: DataTypes.DECIMAL()
+   type: DataTypes.DECIMAL(10, 3)
  },
  doc_id:{
    type: DataTypes.INTEGER
