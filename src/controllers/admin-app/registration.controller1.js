@@ -468,7 +468,6 @@ class RegistrationController {
 
     };
     #directAdd = async(model, insert = true) => {
-        // console.log('direct running code')
         if(!insert){
           await this.#deleteDirect(model.id)
         }
@@ -479,7 +478,6 @@ class RegistrationController {
            raw: true
        })
         if(direct){
-            console.log(direct)
             var directs = {
                 "date_time": Math.floor(new Date().getTime() / 1000),
                 "type": 0,
@@ -583,7 +581,6 @@ class RegistrationController {
                 doc_type = 'Kirim'
             }  
             if(model.backlog == 0){
-                console.log("model.backlog",price)
                 Register_kassaModel.create({
                     "date_time": element.date_time,
                     "doctor_id": model.id,
@@ -605,7 +602,7 @@ class RegistrationController {
         }
         var dds;
         registration_inspection.forEach(async item => {
-            var {registration_inspection_child,registration_inspection, ...data} = item;
+            var {registration_inspection_child, registration_inspection, ...data} = item;
             let user = await UserModel.findOne({
                 where:{
                     id: item.user_id
@@ -613,9 +610,8 @@ class RegistrationController {
                 raw: true
             })
             data.registration_id=model.id;
-                console.log(item.price)
                  if(model.backlog == 0){
-                    let date_time =Math.floor(new Date().getTime() / 1000);
+                    let date_time = Math.floor(new Date().getTime() / 1000);
                     let  tekshiruv = {
                        "date_time": date_time,
                        "type": item.type,
@@ -648,7 +644,7 @@ class RegistrationController {
             const models = await Registration_inspectionModel.create(dds);
                 function isHave(item) { 
                     return item.room_id == user.room_id&&item.patient_id == model.patient_id;
-                  }
+                }
                   
                 var have=await this.q.find(isHave);
                 if(have==undefined){
@@ -663,11 +659,8 @@ class RegistrationController {
                         this.q[index].status=have.status;
                     }
                 }
-            await this.#inspectionchildadd(models, registration_inspection_child); 
-
+            await this.#inspectionchildadd(models, registration_inspection_child);
         })
-        for(var element of registration_inspection){
-        }
     }
     #inspectionchildadd = async(models, registration_inspection_child) => {
         var dds;
@@ -728,7 +721,6 @@ class RegistrationController {
             await this.#deletedoctor(model.id);
             await this.#deleteDoctor(model.id);
         }
-        console.log(registration_doctor)
         for(var element of registration_doctor){
             let user = await UserModel.findOne({
                 where:{
@@ -740,7 +732,7 @@ class RegistrationController {
             let doctor = {
                 "date_time": date_time,
                 "type": 0,
-                "price": Math.floor((user.percent * element.price)/100),
+                "price": Math.floor((user.dataValues.percent * element.price)/100),
                 "doc_id": model.id, 
                 "doctor_id": element.doctor_id,
                 "filial_id": element.filial_id == null ? 0 : element.filial_id,
@@ -750,7 +742,6 @@ class RegistrationController {
             }
             var {Registration_recipe, register_mkb,...data} = element;
             console.log(element, "doctorrrrrrrr");
-            console.log(data.price)
             var news={
                 "doctor_id":element.doctor_id,
                 "registration_id":model.id,
