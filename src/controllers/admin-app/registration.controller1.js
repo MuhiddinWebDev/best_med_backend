@@ -479,6 +479,7 @@ class RegistrationController {
            raw: true
        })
         if(direct){
+            console.log(direct)
             var directs = {
                 "date_time": Math.floor(new Date().getTime() / 1000),
                 "type": 0,
@@ -582,6 +583,7 @@ class RegistrationController {
                 doc_type = 'Kirim'
             }  
             if(model.backlog == 0){
+                console.log("model.backlog",price)
                 Register_kassaModel.create({
                     "date_time": element.date_time,
                     "doctor_id": model.id,
@@ -611,6 +613,7 @@ class RegistrationController {
                 raw: true
             })
             data.registration_id=model.id;
+                console.log(item.price)
                  if(model.backlog == 0){
                     let date_time =Math.floor(new Date().getTime() / 1000);
                     let  tekshiruv = {
@@ -725,6 +728,7 @@ class RegistrationController {
             await this.#deletedoctor(model.id);
             await this.#deleteDoctor(model.id);
         }
+        console.log(registration_doctor)
         for(var element of registration_doctor){
             let user = await UserModel.findOne({
                 where:{
