@@ -94,7 +94,6 @@ class RegistrationController {
     catch(err){
        console.log(err);
     }
-       // res.send('okey');
     };
     statsionar = async(req, res, next) => {
     let query = {}
@@ -622,8 +621,9 @@ class RegistrationController {
                 },
                 raw: true
             })
-            data.registration_id=model.id;
-                 if(model.backlog == 0){
+            
+            data.registration_id = model.id;
+                if(model.backlog == 0){
                     let date_time = Math.floor(new Date().getTime() / 1000);
                     let  tekshiruv = {
                        "date_time": date_time,
@@ -638,27 +638,12 @@ class RegistrationController {
                        "place": "Регистрация",
                        "comment": "",
                        "filial_id": item.filial_id == null ? 0 : item.filial_id,
-                     }
+                    }
                    await  Register_inspectionModel.create(tekshiruv)
-                 }
-            var date = Math.floor(new Date().getTime() / 1000);
-            dds={
-                "inspection_id":item.inspection_id,  
-                "user_id": item.user_id,
-                "registration_id":model.id,
-                "type":item.type,
-                "price": item.price,
-                "category_id":item.category_id,
-                'status':item.status,
-                "date_time": date,
-                "skidka": item.skidka,
-                "filial_id": item.filial_id == null ? 0 : item.filial_id
-            }
-            const models = await Registration_inspectionModel.create(dds);
+                    
                 function isHave(item) { 
                     return item.room_id == user.room_id&&item.patient_id == model.patient_id;
                 }
-                  
                 var have=await this.q.find(isHave);
                 if(have==undefined){
                     this.q.push({"room_id":user.room_id,"patient_id":model.patient_id,"number":0,"date_time":Math.floor(new Date().getTime() / 1000),"status":data.status});
@@ -672,6 +657,22 @@ class RegistrationController {
                         this.q[index].status=have.status;
                     }
                 }
+                }
+            
+            var date = Math.floor(new Date().getTime() / 1000);
+            dds={
+                "inspection_id":item.inspection_id,  
+                "user_id": item.user_id,
+                "registration_id":model.id,
+                "type":item.type,
+                "price": item.price,
+                "category_id":item.category_id,
+                'status':item.status,
+                "date_time": date,
+                "skidka": item.skidka,
+                "filial_id": item.filial_id == null ? 0 : item.filial_id
+            }
+            const models = await Registration_inspectionModel.create(dds);    
             await this.#inspectionchildadd(models, registration_inspection_child);
         })
     }
@@ -741,6 +742,8 @@ class RegistrationController {
                 },
                 raw: true
             })
+            
+            // Console.log olinmasin 
             console.log(user.percent)
             console.log(user.percent)
             console.log(user.percent)
@@ -786,28 +789,29 @@ class RegistrationController {
             const models = await Registration_doctorModel.create(news);
                     if(model.backlog == 0){
                         await  RegisterDoctorModel.create(doctor)
+
+                        function isHave(item) { 
+                            return item.room_id == user.room_id&&item.patient_id == model.patient_id;
+                        }
+                        var have=await this.q.find(isHave);
+                        if(have==undefined){
+                            this.q.push({
+                                "room_id":user.room_id,
+                                "patient_id":model.patient_id,
+                                "number":0,
+                                "date_time":Math.floor(new Date().getTime() / 1000),
+                                "status":data.status
+                            });
+                        }else if(data.status!=have.status){
+                            if(data.status!='complete'){
+                                var index=this.q.findIndex(isHave);
+                                this.q[index].status=have.status;
+                            } else if(have.status!='complete'){
+                                var index=this.q.findIndex(isHave);
+                                this.q[index].status=have.status;
+                            }
+                        }
                     }
-            function isHave(item) { 
-                return item.room_id == user.room_id&&item.patient_id == model.patient_id;
-              }
-            var have=await this.q.find(isHave);
-            if(have==undefined){
-                this.q.push({
-                    "room_id":user.room_id,
-                    "patient_id":model.patient_id,
-                    "number":0,
-                    "date_time":Math.floor(new Date().getTime() / 1000),
-                    "status":data.status
-                });
-            }else if(data.status!=have.status){
-                if(data.status!='complete'){
-                    var index=this.q.findIndex(isHave);
-                    this.q[index].status=have.status;
-                } else if(have.status!='complete'){
-                    var index=this.q.findIndex(isHave);
-                    this.q[index].status=have.status;
-                }
-            }
             await this.#recieptadd(models, element.registration_recipe, false); 
             await this.#tashxisAdd(model, models, element.register_mkb, false)
         }
@@ -901,7 +905,7 @@ class RegistrationController {
                 if(que!=null){
                     element.number=que.number+1;
                 }else{
-                    element.number=1;
+                    element.number = 1;
                 }
                 await QueueModel.create(element); 
             }
@@ -1482,15 +1486,34 @@ class RegistrationController {
         });
     }
     queueAll = async (req, res, next) => {
+        let query = {}
+        let filial_id = req.currentUser.filial_id
+        let filialRooms = await RoomModel.findAll({
+            where: {
+                filial_id
+            }
+        })
+
+        let alloweRooms = [] 
+        for (let room of filialRooms) {
+            alloweRooms.push(parseInt(room.dataValues.id));
+        }
+
+        console.log(alloweRooms)
+
+        query.status = {
+            [Op.not]: 'complete'
+        }
+
+        query.room_id = {
+            [Op.and]: {
+                [Op.not]: 0,
+                [Op.between]: alloweRooms
+            }
+        }
+
         const model = await QueueModel.findAll({
-            where:{
-                status:{
-                    [Op.not]: 'complete'
-                },
-                room_id: {
-                    [Op.not]: 0
-                }
-            },
+            where: query,
             include:[
                 {
                     model: RoomModel, 
