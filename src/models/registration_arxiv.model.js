@@ -12,6 +12,8 @@ const registration_palataModel = require('./registration_palata_arxiv.model');
 const Registration_filesModel = require('./registration_files_arxiv.model');
 const Registration_payModel = require('./registration_pay_arxiv.model');
 const register_mkb = require('./register_mkb.model');
+const FilialModel = require('./filial.model');
+
 
 class Registration_arxivModel extends Model {
     toJSON () {//Api da ishladi
@@ -35,7 +37,6 @@ created_at : {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: Math.floor(new Date().getTime() / 1000)
-
 },
 updated_at : {
     type: DataTypes.INTEGER,
@@ -73,6 +74,9 @@ hospital_summa:{
 },
 direct_id:{
     type: DataTypes.INTEGER
+},
+filial_id:{
+  type: DataTypes.INTEGER
 },
 imtiyoz_type:{
     type: DataTypes.STRING() 
@@ -127,4 +131,5 @@ Registration_arxivModel.belongsTo(DoctorModel, {as: 'doctor', foreignKey: 'id'})
 Registration_arxivModel.belongsTo(UserModel, {as: 'user', foreignKey: 'user_id'})
 Registration_arxivModel.hasMany(registration_palataModel, {as: 'registration_palata', foreignKey: 'registration_id'});
 Registration_arxivModel.hasMany(Registration_payModel, {as: 'registration_pay', foreignKey: 'registration_id'});
+Registration_arxivModel.belongsTo(FilialModel, {as: 'filial', foreignKey: 'filial_id'});
 module.exports = Registration_arxivModel;

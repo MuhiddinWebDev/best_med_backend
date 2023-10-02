@@ -14,6 +14,7 @@ const Registration_filesModel = require("./registration_files.model");
 const Registration_payModel = require("./registration_pay.model");
 const register_mkb = require("./register_mkb.model");
 const register_palataModel = require("./register_palata.model");
+const FilialModel = require("./filial.model");
 
 class RegistrationModel extends Model {
   toJSON() {
@@ -77,6 +78,9 @@ RegistrationModel.init(
     direct_id: {
       type: DataTypes.INTEGER,
     },
+    filial_id:{
+      type: DataTypes.INTEGER
+    },
     tramma_type: {
       type: DataTypes.STRING(),
     },
@@ -139,4 +143,7 @@ RegistrationModel.hasMany(Registration_payModel, {
   as: "registration_pay",
   foreignKey: "registration_id",
 });
+
+RegistrationModel.belongsTo(FilialModel, {as: 'filial', foreignKey: 'filial_id'});
+
 module.exports = RegistrationModel;

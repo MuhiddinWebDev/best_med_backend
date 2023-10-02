@@ -97,13 +97,16 @@ class RegistrationController {
        // res.send('okey');
     };
     statsionar = async(req, res, next) => {
+    let query = {}
+    query.type_service = "Statsionar"
+    if(req.currentUser.role != 'Admin') {
+        query.filial_id = req.currentUser.filial_id
+    }
     try{
-        // console.log("salom");
         let model = await ModelModel.findAll({
-            where:{
-                type_service: "Statsionar"
-            },
+            where: query,
             include:[ 
+                {model: filialModel, as: 'filial'},
                 {
                     model: UserModel, as: 'user', attributes: ['user_name']
                 },
@@ -131,10 +134,10 @@ class RegistrationController {
                         }
                     ]
                 } 
-             ],
+            ],
              order: [
                 ['created_at', 'desc']
-             ]
+            ]
         })
       if(!model)  {
         throw new HttpException(401, "malumot topilmadi")
@@ -151,7 +154,14 @@ class RegistrationController {
     }
     } 
     getAll = async (req, res, next) => {
+        let query = {}
+
+        if(req.currentUser.role != 'Admin') {
+            query.filial_id = req.currentUser.filial_id
+        }
+
         const model = await ModelModel.findAll({
+            where: query,
             include:[ 
                 {
                     model: UserModel, as: 'user', attributes: ['user_name']
@@ -179,12 +189,14 @@ class RegistrationController {
                             model: Registration_inspection_childModel, as: 'registration_inspection_child'
                         }
                     ]
-                } 
+                },
+                {model: filialModel, as: 'filial'}
              ],
              order: [
                 ['created_at', 'desc']
              ]
         });
+
         res.status(200).send({  
             error: false,
             error_code: 200,
@@ -446,6 +458,7 @@ class RegistrationController {
             model.pay_summa = data.pay_summa;
             model.backlog = data.backlog;
             model.discount = data.discount;
+            model.filial_id = data.filial_id;
             await model.validate();
             await model.save();
             await this.#inspectionadd(model, registration_inspection,false);

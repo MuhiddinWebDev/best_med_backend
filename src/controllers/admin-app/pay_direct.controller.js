@@ -226,8 +226,6 @@ class reagentController {
     getDirect = async (req, res) => {
         let {direct_id} = req.body
 
-        console.log(req.body)
-
         const kirim = await RegisterDirectModel.findAll({
             where: {
               direct_id, 
@@ -248,7 +246,6 @@ class reagentController {
             ]  
         })
         
-
         const Kirims = kirim[0].get('totalAmount');
         const Chiqims = chiqim[0].get('totalAmount');
                   
