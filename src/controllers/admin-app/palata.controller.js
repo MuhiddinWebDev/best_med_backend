@@ -45,42 +45,38 @@ class palataController {
   };
 
   palata = async (req, res, next) => {
-    let query = {},
-      queryx = {};
+    let query = {}, queryx = {};
     let body = req.body;
-    query.date_time = {
-      [Op.gte]: body.datetime1,
-      [Op.lte]: body.datetime2,
-    };
+
+    if(body.datetime1 || body.datetime2) {
+      query.date_time = {
+        [Op.gte]: body.datetime1,
+        [Op.lte]: body.datetime2,
+      };
+    }
+    
     if (body.filial_id != null) {
       queryx.filial_id = { [Op.eq]: body.filial_id };
     }
+    
     let model = await palataModel.findAll({
-      attributes: [
-        "id",
-        "name",
-        "price",
-        "status",
-        "filial_id",
-        "user_id",
-        // [sequelize.literal('register_palata.date_time'), 'date_time']
-      ],
       include: [
         {
           model: register_palataModel,
           as: "register_palata",
-          attributes: ["id", "price", "date_time", "date_to", "date_do", "day"],
           where: query,
+          required: false,
           include: [
             {
               model: RegistrationModel,
               as: "registration",
-              attributes: ["id", "backlog", "patient_id", "pay_summa"],
+              required: false,
             },
             {
               model: PatientModel,
               as: "patient",
-              attributes: ["id","fullname"],
+              attributes: ["id", "fullname"],
+              required: false,
             },
           ],
         },
@@ -88,44 +84,32 @@ class palataController {
       where: queryx,
       group: ["id"],
     });
+    
     let bugun = Math.floor(new Date().getDate() / 1000);
+    
     for (let i = 0; i < model.length; i++) {
       if (model[i].dataValues.register_palata.length > 0) {
         for (let key of model[i].dataValues.register_palata) {
            if(key.dataValues.registration != null){
-             if (
-               key.dataValues.date_to >= bugun &&
-               key.dataValues.registration.backlog == 0
-             ) {
-               model[i].dataValues.text =
-                 "pul tolagan vaqti tugagan lekin yotipdi";
-             } else if (
-               key.dataValues.date_do <= bugun &&
-               key.dataValues.registration.backlog == 0
-             ) {
-               model[i].dataValues.text = "pul tolagan, vaqti tugamagan yotipdi";
-             } else if (
-               key.dataValues.date_do <= bugun &&
-               key.dataValues.registration.backlog != 0
-             ) {
-               model[i].dataValues.text = "pul tolamagan va vaqti otib ketgan";
-             } else if (
-               key.dataValues.date_do >= bugun &&
-               key.dataValues.registration.backlog != 0
-             ) {
-               model[i].dataValues.text = "pul tolamagan va vaqti otib ketmagan";
+             if (key.dataValues.registration.backlog == 0) {
+               model[i].dataValues.text = "qarz";
              }
-
-           }else{
-            console.log(key.dataValues)
+            //  else if (key.dataValues.date_do <= bugun && key.dataValues.registration.backlog == 0) {
+            //    model[i].dataValues.text = "Пул тўлаган, вақти тугамаган бемор ётипди";
+            //  } else if (key.dataValues.date_do <= bugun && key.dataValues.registration.backlog != 0 ) {
+            //    model[i].dataValues.text = "Пул тўламаган ва вақти ўтиб кетган";
+            //  } else if (key.dataValues.date_do >= bugun && key.dataValues.registration.backlog != 0) {
+            //    model[i].dataValues.text = "Пул тўламаган ва вақти ўтиб кетмаган";
+            //  }
            }  
         }
       } else {
-        model[i].dataValues.text = "palata bo'sh";
+        model[i].dataValues.text = "Палата бўш";
       }
     }
     res.send(model);
   };
+
   getOne = async (req, res, next) => {
     this.checkValidation(req);
     const model = await palataModel.findOne({
@@ -143,7 +127,7 @@ class palataController {
       data: model,
     });
   };
-
+  
   create = async (req, res, next) => {
     this.checkValidation(req);
     const model = await palataModel.create(req.body);
@@ -154,6 +138,7 @@ class palataController {
       data: model,
     });
   };
+  
   update = async (req, res, next) => {
     this.checkValidation(req);
     const model = await palataModel.findOne({
@@ -173,6 +158,7 @@ class palataController {
       data: model,
     });
   };
+  
   delete = async (req, res, next) => {
     const model = await palataModel.destroy({
       where: {
@@ -189,6 +175,7 @@ class palataController {
       data: model,
     });
   };
+  
   checkValidation = (req) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

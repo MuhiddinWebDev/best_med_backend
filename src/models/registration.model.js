@@ -100,50 +100,19 @@ RegistrationModel.init(
     ],
   }
 );
-register_palataModel.belongsTo(RegistrationModel, {
-  as: "registration",
-  foreignKey: "registration_id",
-});
-Register_kassaModel.belongsTo(RegistrationModel, {
-  as: "registration",
-  foreignKey: "doctor_id",
-});
-RegistrationModel.hasMany(Registration_doctorModel, {
-  as: "registration_doctor",
-  foreignKey: "registration_id",
-});
-RegistrationModel.hasMany(Registration_inspectionModel, {
-  as: "registration_inspection",
-  foreignKey: "registration_id",
-});
-// RegistrationModel.hasMany(Registration_inspection_childModel, {as: 'registration_inspection_child', foreignKey: 'id'})
-RegistrationModel.hasMany(Register_kassaModel, {
-  as: "register_kassa",
-  foreignKey: "doctor_id",
-});
-RegistrationModel.hasMany(Registration_filesModel, {
-  as: "registration_files",
-  foreignKey: "registration_id",
-});
-RegistrationModel.belongsTo(PatientModel, {
-  as: "patient",
-  foreignKey: "patient_id",
-});
+
+register_palataModel.belongsTo(RegistrationModel, {as: "registration", foreignKey: "registration_id"});
+RegistrationModel.hasMany(registration_palataModel, {as: "registration_palata", foreignKey: "registration_id"});
+Register_kassaModel.belongsTo(RegistrationModel, {as: "registration",foreignKey: "doctor_id",});
+RegistrationModel.hasMany(Registration_doctorModel, {as: "registration_doctor",foreignKey: "registration_id",});
+RegistrationModel.hasMany(Registration_inspectionModel, {as: "registration_inspection",foreignKey: "registration_id",});
+RegistrationModel.hasMany(Register_kassaModel, {as: "register_kassa",foreignKey: "doctor_id",});
+RegistrationModel.hasMany(Registration_filesModel, {as: "registration_files",foreignKey: "registration_id",});
+RegistrationModel.belongsTo(PatientModel, {as: "patient", foreignKey: "patient_id",});
 RegistrationModel.belongsTo(DoctorModel, { as: "doctor", foreignKey: "id" });
 RegistrationModel.belongsTo(UserModel, { as: "user", foreignKey: "user_id" });
-RegistrationModel.belongsTo(directModel, {
-  as: "direct",
-  foreignKey: "direct_id",
-});
-RegistrationModel.hasMany(registration_palataModel, {
-  as: "registration_palata",
-  foreignKey: "registration_id",
-});
-RegistrationModel.hasMany(Registration_payModel, {
-  as: "registration_pay",
-  foreignKey: "registration_id",
-});
-
+RegistrationModel.belongsTo(directModel, {as: "direct", foreignKey: "direct_id", });
+RegistrationModel.hasMany(Registration_payModel, {as: "registration_pay", foreignKey: "registration_id",});
 RegistrationModel.belongsTo(FilialModel, {as: 'filial', foreignKey: 'filial_id'});
 
 module.exports = RegistrationModel;

@@ -1499,8 +1499,6 @@ class RegistrationController {
             alloweRooms.push(parseInt(room.dataValues.id));
         }
 
-        console.log(alloweRooms)
-
         query.status = {
             [Op.not]: 'complete'
         }
