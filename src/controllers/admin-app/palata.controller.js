@@ -84,14 +84,12 @@ class palataController {
       where: queryx,
       group: ["id"],
     });
-    
-    let bugun = Math.floor(new Date().getDate() / 1000);
-    
+        
     for (let i = 0; i < model.length; i++) {
       if (model[i].dataValues.register_palata.length > 0) {
         for (let key of model[i].dataValues.register_palata) {
            if(key.dataValues.registration != null){
-             if (key.dataValues.registration.backlog == 0) {
+             if (key.dataValues.registration.backlog <= 0) {
                model[i].dataValues.text = "qarz";
              }
             //  else if (key.dataValues.date_do <= bugun && key.dataValues.registration.backlog == 0) {

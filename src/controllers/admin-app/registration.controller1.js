@@ -545,8 +545,6 @@ class RegistrationController {
         if (!result) {
             throw new HttpException(404, 'Not found');
         }
-
-
         res.send('Has been deleted' );
     };
     checkValidation = (req) => {
@@ -948,6 +946,7 @@ class RegistrationController {
     }
     #deletePalata = async(doc_id) => {
         await registration_palataModel.destroy({where: {registration_id: doc_id}})
+        await register_palataModel.destroy({where: {registration_id: doc_id}})
     }
     #deletepay = async(doc_id) => {
         await Registration_payModel.destroy({where: {registration_id: doc_id}})
@@ -980,7 +979,6 @@ class RegistrationController {
                 where: {
                     filial_id: query.filial_id
                 }
-                // raw: true
                })
         result.forEach(value => {
            if(value.dataValues.palatas.length > 0){
@@ -1258,80 +1256,87 @@ class RegistrationController {
             where:{
                 id: req.params.id
             }
-          })
-          if(user == null){
+        })
+
+        if(user == null){
             throw new HttpException(401, "registratsiya mavjud emas")
-          }
-        //   console.log(user.dataValues.user_id);
-          await QueueModel.destroy({
+        }
+        
+        await QueueModel.destroy({
             where:{
                 patient_id: user.dataValues.patient_id
             }
-          })
-          await uplataModel.destroy({
+        })
+        await uplataModel.destroy({
             where:{
                 user_id: user.dataValues.user_id
             }
-          })
-      const doctor = await Registration_doctorModel.destroy({
+        })
+        const doctor = await Registration_doctorModel.destroy({
+        where:{
+            registration_id: req.params.id
+        }
+        })
+        await Registration_filesModel.destroy({
+            where:{
+            registration_id: req.params.id
+            }
+        })
+        const inspection = await Registration_inspectionModel.destroy({
+            where:{
+            registration_id: req.params.id
+            }
+        })
+        await Registration_inspection_childModel.destroy({
+            where:{
+            registration_id: req.params.id
+            }
+        })
+        await Register_inspectionModel.destroy({
+            where:{
+                doc_id: req.params.id
+            }
+        })
+        await RegisterDoctorModel.destroy({
+            where:{
+                doc_id: req.params.id
+            }
+        })
+        await register_mkb.destroy({
             where:{
                 registration_id: req.params.id
             }
-           })
-           await Registration_filesModel.destroy({
-               where:{
-                registration_id: req.params.id
-               }
-              })
-            const inspection = await Registration_inspectionModel.destroy({
-               where:{
-                registration_id: req.params.id
-               }
-              })
-              await Registration_inspection_childModel.destroy({
-               where:{
-                registration_id: req.params.id
-               }
-              })
-              await Register_inspectionModel.destroy({
+        })
+        const pay = await Registration_payModel.destroy({
+            where:{
+            registration_id: req.params.id
+            }
+        })
+        await Registration_recipeModel.destroy({
+            where:{
+            registration_id: req.params.id
+            }
+        })
+        await Register_kassaModel.destroy({
                 where:{
-                    doc_id: req.params.id
+                    doctor_id: req.params.id,
+                    place: 'Регистрация'
                 }
-              })
-              await RegisterDoctorModel.destroy({
-                where:{
-                    doc_id: req.params.id
-                }
-              })
-              await register_mkb.destroy({
-                where:{
-                    registration_id: req.params.id
-                }
-              })
-           const pay = await Registration_payModel.destroy({
-               where:{
-                registration_id: req.params.id
-               }
-              })
-              await Registration_recipeModel.destroy({
-               where:{
-                registration_id: req.params.id
-               }
-              })
-              await Register_kassaModel.destroy({
-                  where:{
-                      doctor_id: req.params.id,
-                      place: 'Регистрация'
-                  }
-              })
-              const model =  await ModelModel.destroy({ 
+        })
+
+        await registration_palataModel.destroy({where: {registration_id: req.params.id}})
+        await register_palataModel.destroy({where: {registration_id: req.params.id}})
+        
+        const model =  await ModelModel.destroy({ 
                 where:{
                   id: req.params.id
                 }
-            });
+        });
+        
         if(!model){
             throw new HttpException(404, "bunday id yoq")
         }
+
         res.status(200).send({
             error: false,
             error_code: 200,
