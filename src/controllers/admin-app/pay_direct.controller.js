@@ -156,7 +156,7 @@ class reagentController {
             filial_id: model.filial_id,
             user_id: model.user_id,
             pay_type: model.pay_type == 1 ? "Plastik" : "Naqt",
-            doc_type: "Chiqim"
+            doc_type: "chiqim"
         }
 
         let rDirect = {

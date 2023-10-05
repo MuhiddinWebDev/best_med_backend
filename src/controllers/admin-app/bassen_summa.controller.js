@@ -38,14 +38,14 @@ class kirish_basseynController {
       type: "Naqt",
       price: person_sum > 0 ? main_sum * person_sum : 0,
       odam_soni: person_sum,
-      doc_type: "Kirim",
+      doc_type: "kirim",
     });
     let kassa = {
       date_time: date,
       type: 0,
       price: sum,
       pay_type: "Naqt",
-      doc_type: "Kirim",
+      doc_type: "kirim",
       doctor_id: model.id,
       place: "Bassen",
       filial_id: filial_id,

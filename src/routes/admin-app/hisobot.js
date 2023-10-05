@@ -7,6 +7,7 @@ const awaitHandlerFactory = require('../../middleware/awaitHandlerFactory.middle
 router.post('/doctor_hisobot', auth(), awaitHandlerFactory(hisobotController.doctorHisobot));
 router.post('/doctor_sverka', auth(), awaitHandlerFactory(hisobotController.DoctorSverka));
 router.post('/inspection_hisobot', auth(), awaitHandlerFactory(hisobotController.inspection));
+router.post('/inspection_hisobot_salary', auth(), awaitHandlerFactory(hisobotController.inspectionSalary));
 router.post('/inspection_sverka', auth(), awaitHandlerFactory(hisobotController.InspectionSverka));
 router.post('/direct_hisobot', auth(), awaitHandlerFactory(hisobotController.directHisobot));
 router.post('/direct_sverka', auth(), awaitHandlerFactory(hisobotController.directSverka));

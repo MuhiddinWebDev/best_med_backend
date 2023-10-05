@@ -74,8 +74,8 @@ class Kassa_orderController {
         "pay_type": pay_type,
         "price": req.body.price,    
         "type": type,
-        "doc_type": 'Chiqim',
-        "place": "касса Ордер",
+        "doc_type": 'chiqim',
+        "place": "Кассавий ордер",
         "user_id": req.currentUser.dataValues.id,
         "filial_id": req.currentUser.dataValues.filial_id
     })
@@ -124,8 +124,8 @@ class Kassa_orderController {
         "pay_type": pay_type,
         "price": req.body.price,    
         "type": type,
-        "doc_type": 'Chiqim',
-        "place": "касса Ордер",
+        "doc_type": 'chiqim',
+        "place": "Кассавий ордер",
         "user_id": req.currentUser.dataValues.id,
         "filial_id": req.currentUser.dataValues.filial_id
     })

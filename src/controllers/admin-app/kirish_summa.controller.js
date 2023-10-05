@@ -43,14 +43,14 @@ class kirish_summaController {
           ? summa.dataValues.moshina_price * body.mashina_soni
           : 0,
       odam_soni: body.odam_soni,
-      doc_type: "Kirim",
+      doc_type: "kirim",
     });
     let kassa = {
       date_time: date,
       type: 0,
       price: sum,
       pay_type: "Naqt",
-      doc_type: "Kirim",
+      doc_type: "kirim",
       doctor_id: model.id,
       place: "Kirish",
       filial_id: filial_id,

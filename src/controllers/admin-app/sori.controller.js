@@ -63,14 +63,14 @@ class soriController {
 //         "price": body.price,
 //         "mashina_soni": body.mashina_soni,
 //         "odam_soni": body.odam_soni,
-//         "doc_type": "Kirim"
+//         "doc_type": "kirim"
 //      })
 //      let kassa = {
 //         "date_time": date,
 //         "type": 0,
 //         "price": body.price,
 //         "pay_type": "Naqt",
-//         "doc_type": "Kirim",
+//         "doc_type": "kirim",
 //         "doctor_id": model.id,
 //         "place": "Kirish",
 //         "filial_id": 0
@@ -94,7 +94,7 @@ class soriController {
     let register_sori = {
         "date_time": date,
         "type": 0,
-        "doc_type": "Kirim",
+        "doc_type": "kirim",
         "price": sori.price,
         "doc_id": sori.id,
         "status": sori.status
@@ -105,7 +105,7 @@ class soriController {
          "type": 0,
          "price": sori.price,
          "pay_type": "Naqt",
-         "doc_type": "Kirim",
+         "doc_type": "kirim",
          "doctor_id": sori.id,
          "place": "Sori",
          "filial_id": filial_id
@@ -160,7 +160,7 @@ class soriController {
                 'id', 'date_time', 'price','doc_id','doc_type',
                 [sequelize.literal('sori.name'), 'sori_name'],
                 [sequelize.literal("SUM(CASE WHEN register_sori.date_time <=" + body.datetime1 + " THEN register_sori.price * power(-1, 'type') ELSE 0 END)"), 'begin_total'],
-                [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'Kirim' THEN register_sori.price ELSE 0 END)"), 'total_kirim'],
+                [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'kirim' THEN register_sori.price ELSE 0 END)"), 'total_kirim'],
                 [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'chiqim' THEN register_sori.price ELSE 0 END)"), 'total_chiqim'],
             ],
             include:[
@@ -188,7 +188,7 @@ class soriController {
                 'id', 'date_time', 'price','doc_id','doc_type',
                 [sequelize.literal('sori.name'), 'sori_name'],
                 [sequelize.literal("SUM(CASE WHEN register_sori.date_time <=" + body.datetime1 + " THEN register_sori.price * power(-1, 'type') ELSE 0 END)"), 'begin_total'],
-                [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'Kirim' THEN register_sori.price ELSE 0 END)"), 'total_kirim'],
+                [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'kirim' THEN register_sori.price ELSE 0 END)"), 'total_kirim'],
                 [sequelize.literal("SUM(CASE WHEN register_sori.date_time >= " + body.datetime1 + " and register_sori.date_time <= " + body.datetime2 + " AND register_sori.doc_type = 'chiqim' THEN register_sori.price ELSE 0 END)"), 'total_chiqim'],
             ],
             include:[

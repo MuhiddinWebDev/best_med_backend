@@ -577,18 +577,18 @@ class RegistrationController {
             let type = 0, doc_type = '';
             if(element.pay_type == 'Plastik'){
                 type = 0,
-                doc_type = 'Kirim'
+                doc_type = 'kirim'
             }
             else if(element.pay_type == 'Naqt'){
                 type = 0,
-                doc_type = 'Kirim'
+                doc_type = 'kirim'
             }
             else if(!element.summa){
                  type = 1,
-                 doc_type = 'Kirim'
+                 doc_type = 'kirim'
             }
             else{
-                doc_type = 'Kirim'
+                doc_type = 'kirim'
             }  
             if(model.backlog == 0){
                 Register_kassaModel.create({
@@ -599,7 +599,7 @@ class RegistrationController {
                     "filial_id": element.filial.id == null ? 0 : element.filial.id,
                     "price": element.summa,    
                     "type": type,
-                    "doc_type": 'Kirim',
+                    "doc_type": 'kirim',
                     "place": "Регистрация"
                 })
                }
@@ -1590,11 +1590,11 @@ class RegistrationController {
         const model = await Register_kassaModel.findAll({
             attributes : [ 
                 'id', 'doctor_id', "type", "date_time", "doc_type",
-                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time < " + vaqt1 + " and register_kassa.doc_type = 'Kirim' THEN register_kassa.price * power(-1, 'type') ELSE 0 END)"), 'kirim'],
-                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time < " + vaqt1 + " and register_kassa.doc_type = 'Chiqim' THEN register_kassa.price * power(-1, 'type') ELSE 0 END)"), 'chiqim'],
-                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'Kirim' and pay_type = 'Plastik' THEN register_kassa.price ELSE 0 END)"), 'plasKirim'],
+                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time < " + vaqt1 + " and register_kassa.doc_type = 'kirim' THEN register_kassa.price * power(-1, 'type') ELSE 0 END)"), 'kirim'],
+                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time < " + vaqt1 + " and register_kassa.doc_type = 'chiqim' THEN register_kassa.price * power(-1, 'type') ELSE 0 END)"), 'chiqim'],
+                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'kirim' and pay_type = 'Plastik' THEN register_kassa.price ELSE 0 END)"), 'plasKirim'],
                 [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'chiqim' and pay_type = 'Plastik' THEN register_kassa.price ELSE 0 END)"), 'plasChiqim'],
-                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'Kirim' and (pay_type = 'Naqd' || pay_type = 'Naqt') THEN register_kassa.price ELSE 0 END)"), 'naqdKirim'],
+                [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'kirim' and (pay_type = 'Naqd' || pay_type = 'Naqt') THEN register_kassa.price ELSE 0 END)"), 'naqdKirim'],
                 [sequelize.literal("SUM(CASE WHEN register_kassa.date_time >= " + vaqt1 + " and register_kassa.date_time <= " + vaqt2 + " AND register_kassa.doc_type = 'chiqim' and (pay_type = 'Naqd' || pay_type = 'Naqt') THEN register_kassa.price ELSE 0 END)"), 'naqdChiqim'],
             ],
             group: [
