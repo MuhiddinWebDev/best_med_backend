@@ -17,12 +17,12 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.insert('filial', 
     ['name'], 
-    ['Asosiy']
+    ['Bosh filial']
   );
 };
 
 exports.down = function(db) {
-    return db.delete('filial').where({name: 'Asosiy'});
+    return db.delete('filial').where({name: 'Bosh filial'});
 };
 
 exports._meta = {
