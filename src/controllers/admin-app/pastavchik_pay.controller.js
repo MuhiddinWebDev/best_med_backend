@@ -215,7 +215,7 @@ class pastavchik_payController {
     let prixod = await register_supplierModel.findAll({
         where:{
             pastavchik_id: req.body.pastavchik_id,
-            place: 'Приход'
+            place: 'Prixod'
         },
         raw: true
     })
