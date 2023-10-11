@@ -60,9 +60,17 @@ class pastavchik_payController {
     create = async (req, res, next) => {
        this.checkValidation(req);
        let filial_id = req.currentUser.filial_id;
-      
+       let pType
+       
+       if(req.body.type == "Naqt") {
+            pType = 0
+       }else {
+            pType = 1
+       }
+        
+
        const model = await pastavchik_payModel.create({
-          "type": req.body.type,
+          "type": pType,
           "price": req.body.price,
           "backlog": req.body.backlog,
           "jami_summa": req.body.jami_summa,
@@ -118,7 +126,13 @@ class pastavchik_payController {
             }
         });
         
-        model.type = req.body.type;
+        if(req.body.type == "Naqt") {
+            pType = 0
+        }else {
+            pType = 1
+        }
+
+        model.type = pType;
         model.price = req.body.price;
         model.backlog = req.body.backlog;
         model.comment = req.body.comment;
