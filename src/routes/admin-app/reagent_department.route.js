@@ -12,4 +12,6 @@ router.get('/one/:id', auth(), awaitHandlerFactory(reagentDepartmentController.g
 router.post('/create',auth(), directModels, awaitHandlerFactory(reagentDepartmentController.create));
 router.patch('/update/:id', auth(), directModels, awaitHandlerFactory(reagentDepartmentController.update));
 router.delete('/delete/:id', auth(), awaitHandlerFactory(reagentDepartmentController.delete));
+router.get('/ostatka/:id', auth(), awaitHandlerFactory(reagentDepartmentController.getOstatka));
+router.get('/hisobot', auth(), awaitHandlerFactory(reagentDepartmentController.hisobot));
 module.exports = router;

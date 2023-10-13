@@ -25,6 +25,18 @@ reagent_id: {
   type: DataTypes.INTEGER,
   allowNull: false
 },
+user_id: {
+  type: DataTypes.INTEGER,
+  allowNull: false
+},
+filial_id: {
+  type: DataTypes.INTEGER,
+  allowNull: false
+},
+datetime: {
+  type: DataTypes.INTEGER,
+  allowNull: false
+},
 count:{
   type: DataTypes.DECIMAL,
   allowNull: false
