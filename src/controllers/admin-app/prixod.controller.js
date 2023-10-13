@@ -141,7 +141,8 @@ class prixodController {
                 "price": key.price,
                 "prixod_id": model.id,
                 "count": key.count,
-                "summa": key.summa
+                "summa": key.summa,
+                "datetime": Math.floor(new Date().getTime() / 1000),
             }
             await prixod_tableModel.create(tables);
             var reagent = {

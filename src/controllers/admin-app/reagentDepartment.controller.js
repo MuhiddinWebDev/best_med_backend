@@ -3,9 +3,10 @@ const reagentDepartmentModel = require("../../models/reagent_department.model");
 const { validationResult } = require("express-validator");
 const reagentModel = require("../../models/reagent.model");
 const prixodTableModel = require("../../models/prixod_table.model");
+const department = require("../../models/department.model");
 const inspectionCategoryModel = require("../../models/doctor_category.model");
-const { Op, Sequelize } = require('sequelize');
-const sequelize = require('sequelize');
+const { Op, Sequelize } = require("sequelize");
+const sequelize = require("sequelize");
 /******************************************************************************
  *                              Employer Controller
  ******************************************************************************/
@@ -68,10 +69,10 @@ class reagentDepartmentController {
       user_id: req.currentUser.id,
       datetime: req.body.datetime,
       filial_id: req.body.filial_id,
-      place: "Reagent"
-    }
-    
-    await prixodTableModel.create(table)
+      place: "Reagent",
+    };
+
+    await prixodTableModel.create(table);
 
     res.status(200).send({
       error: false,
@@ -129,30 +130,31 @@ class reagentDepartmentController {
   };
 
   getOstatka = async (req, res) => {
-    let id = parseInt(req.params.id)
+    let id = parseInt(req.params.id);
 
     const result = await prixodTableModel.findOne({
-        where: {
-          reagent_id: id
-        },
-        attributes: [
-          'reagent_id', 
-          [Sequelize.fn('SUM', Sequelize.col('count')), 'totalCount']  
-        ]
+      where: {
+        reagent_id: id,
+      },
+      attributes: [
+        "reagent_id",
+        [Sequelize.fn("SUM", Sequelize.col("count")), "totalCount"],
+      ],
     });
-  
+
     const result2 = await reagentDepartmentModel.findOne({
-        where: {
-          reagent_id: id
-        },
-        attributes: [
-          'reagent_id', 
-          [Sequelize.fn('SUM', Sequelize.col('count')), 'totalCount']  
-        ]
+      where: {
+        reagent_id: id,
+      },
+      attributes: [
+        "reagent_id",
+        [Sequelize.fn("SUM", Sequelize.col("count")), "totalCount"],
+      ],
     });
 
     // Subtract the counts
-    let countDifference = result.dataValues.totalCount - result2.dataValues.totalCount;
+    let countDifference =
+      result.dataValues.totalCount - result2.dataValues.totalCount;
 
     res.status(200).send({
       error: false,
@@ -160,11 +162,54 @@ class reagentDepartmentController {
       message: "Malumotlar tahrirlandi",
       data: countDifference,
     });
-  }
+  };
 
   hisobot = async (req, res) => {
-    // let model = 
-  }
+    let query = {};
+
+    if (req.query.datetime1 || req.query.datetime2) {
+      query.datetime = {
+        [Op.between]: [parseInt(Math.floor(req.query.datetime1 / 1000)), parseInt(Math.floor(req.query.datetime2 / 1000))],
+      };
+    }
+
+    let model1 = await prixodTableModel.findAll({
+      where: query,
+      include: [
+        {
+          model: reagentModel,
+          as: "reagent",
+        },
+      ],
+    });
+
+    let model2 = await reagentDepartmentModel.findAll({
+      where: query,
+      include: [
+        {
+          model: reagentModel,
+          as: "reagent",
+        },
+        {
+          model: inspectionCategoryModel,
+          as: "department",
+        },
+      ],
+    });
+
+    let model = [...model1, ...model2];
+    
+    model = model.sort((a, b) => {
+      return a.id - b.id;
+    });
+
+    res.status(200).send({
+      error: false,
+      error_code: 200,
+      message: "Malumotlar tahrirlandi",
+      data: model,
+    });
+  };
 }
 
 /******************************************************************************

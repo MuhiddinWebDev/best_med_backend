@@ -34,6 +34,10 @@ summa:{
 prixod_id:{
   type: DataTypes.INTEGER,
   allowNull: false
+},
+datetime:{
+  type: DataTypes.INTEGER,
+  allowNull: false
 }
 
 }, {
