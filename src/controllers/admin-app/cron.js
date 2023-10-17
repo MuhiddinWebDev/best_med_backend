@@ -72,7 +72,6 @@ const { Op, QueryTypes } = require("sequelize");
 const db = require('../../db/db-sequelize');
 moment.tz.setDefault('Asia/Tashkent');
 cron.timezone = 'Asia/Tashkent';
-const register_palataModel = require("../../models/register_palata.model");
 
 
 // 30 23 * * *
