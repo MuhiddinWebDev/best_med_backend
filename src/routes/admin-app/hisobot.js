@@ -21,4 +21,9 @@ router.post('/kassa_sverka', auth(), awaitHandlerFactory(hisobotController.kassa
 router.post('/kirish', auth(), awaitHandlerFactory(hisobotController.kirishHisobot));
 router.post('/bassen', auth(), awaitHandlerFactory(hisobotController.BassenSverka));
 // router.post('/kirish_sverka', auth(), awaitHandlerFactory(hisobotController.kirishHisobot));
+// 
+router.post('/gender-count', auth(), awaitHandlerFactory(hisobotController.genderCountBemor));
+router.post('/comutas', auth(), awaitHandlerFactory(hisobotController.countAS));
+router.post('/countworker', auth(), awaitHandlerFactory(hisobotController.countWorker));
+
 module.exports = router;

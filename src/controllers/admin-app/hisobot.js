@@ -23,7 +23,7 @@ const directModel = require("../../models/direct.model");
 const med_directModel = require("../../models/med_direct.model");
 const UserModel = require("../../models/user.model");
 const Inspection_categoryModel = require("../../models/inspector_category.model");
-
+const db = require('../../db/db-sequelize')
 
 class HisobotController {
     directSverka = async (req, res, next) => {
@@ -671,6 +671,58 @@ class HisobotController {
             group: ['id']
         })
         res.send(result);
+    }
+
+    genderCountBemor = async (req, res) => {       
+        const [results, metadata] = await db.query(`
+            SELECT 
+                SUM(CASE WHEN gender = 'Erkak' THEN 1 ELSE 0 END) AS maleCount,
+                SUM(CASE WHEN gender = 'Ayol' THEN 1 ELSE 0 END) AS femaleCount
+            FROM patient
+        `);
+
+        const [counts] = results;
+        res.send(counts);
+    }
+
+    countAS = async (req, res) => {    
+        const [results, metadata] = await db.query(`
+            SELECT 
+                SUM(CASE WHEN type_service = 'Statsionar' THEN 1 ELSE 0 END) AS statsionar,
+                SUM(CASE WHEN type_service = 'Ambulator' THEN 1 ELSE 0 END) AS ambulator
+            FROM registration
+        `);
+
+        const [counts] = results;
+        res.send(counts);
+    }
+
+    countWorker = async (req, res) => {
+        let role = req.currentUser.role
+        let filial_id = req.currentUser.filial_id
+
+        let sql = `
+            SELECT 
+                SUM(CASE WHEN role = 'Kasser' THEN 1 ELSE 0 END) AS kassir,
+                SUM(CASE WHEN role = 'Loborant' THEN 1 ELSE 0 END) AS laborant,
+                SUM(CASE WHEN role = 'Shifokor' THEN 1 ELSE 0 END) AS shifokor,
+                SUM(CASE WHEN role = 'Registrator' THEN 1 ELSE 0 END) AS registrator
+            FROM user
+        `;
+
+        if (role === 'Admin') {
+            if (req.body.filial_id) {
+                sql += `WHERE filial_id = ${req.body.filial_id}`; 
+            }
+        } else {
+            sql += `WHERE filial_id = ${filial_id}`;
+        }
+
+        const [results, metadata] = await db.query(sql);
+
+
+        const [counts] = results;
+        res.send(counts);
     }
 }
 
