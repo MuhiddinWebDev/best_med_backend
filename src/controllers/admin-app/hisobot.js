@@ -724,6 +724,60 @@ class HisobotController {
         const [counts] = results;
         res.send(counts);
     }
+
+    countTekshiruvDoktor = async (req, res) => {
+        const currentYear = new Date().getFullYear();
+        function generateMonthArray() {
+            const months = [];
+            for (let i = 1; i <= 12; i++) {
+                months.push(i);
+            }
+            return months;
+        }
+        
+        const query = `
+        SELECT 
+            u.user_name as user_id,
+            DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
+            COUNT(*) AS record_count
+        FROM 
+            register_doctor rd
+        JOIN 
+            user u ON rd.doctor_id = u.doctor_id
+        WHERE
+            YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
+        GROUP BY 
+            u.id, month
+        `;
+        
+        db.query(query, {
+            replacements: { currentYear },
+            type: db.QueryTypes.SELECT
+        }).then(results => {
+            const monthArray = generateMonthArray();
+            const formattedResults = {};
+        
+            results.forEach(row => {
+                const userId = row.user_id;
+                const month = parseInt(row.month, 10);
+        
+                if (!formattedResults[userId]) {
+                    formattedResults[userId] = Array.from({ length: 12 }).fill(0);
+                }
+        
+                formattedResults[userId][month - 1] = row.record_count;
+            });
+        
+            const finalResult = Object.keys(formattedResults).map(userId => ({
+                name: `${userId}`,
+                data: formattedResults[userId]
+            }));
+        
+            res.send(finalResult)
+        }).catch(error => {
+            console.error(error);
+        });
+    }
 }
 
 

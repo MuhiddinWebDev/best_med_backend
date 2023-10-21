@@ -23,7 +23,8 @@ router.post('/bassen', auth(), awaitHandlerFactory(hisobotController.BassenSverk
 // router.post('/kirish_sverka', auth(), awaitHandlerFactory(hisobotController.kirishHisobot));
 // 
 router.post('/gender-count', auth(), awaitHandlerFactory(hisobotController.genderCountBemor));
-router.post('/comutas', auth(), awaitHandlerFactory(hisobotController.countAS));
+router.post('/countas', auth(), awaitHandlerFactory(hisobotController.countAS));
 router.post('/countworker', auth(), awaitHandlerFactory(hisobotController.countWorker));
+router.post('/tekshiruv-doktor', auth(), awaitHandlerFactory(hisobotController.countTekshiruvDoktor));
 
 module.exports = router;
