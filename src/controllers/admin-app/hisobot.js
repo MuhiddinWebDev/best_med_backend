@@ -778,6 +778,112 @@ class HisobotController {
             console.error(error);
         });
     }
+
+    countTekshiruvLaborant = async (req, res) => {
+        const currentYear = new Date().getFullYear();
+        function generateMonthArray() {
+            const months = [];
+            for (let i = 1; i <= 12; i++) {
+                months.push(i);
+            }
+            return months;
+        }
+        
+        const query = `
+        SELECT 
+            u.user_name as user_id,
+            DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
+            COUNT(*) AS record_count
+        FROM 
+            register_inspection rd
+        JOIN 
+            user u ON rd.user_id = u.id
+        WHERE
+            YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
+        GROUP BY 
+            u.id, month
+        `;
+        
+        db.query(query, {
+            replacements: { currentYear },
+            type: db.QueryTypes.SELECT
+        }).then(results => {
+            const monthArray = generateMonthArray();
+            const formattedResults = {};
+        
+            results.forEach(row => {
+                const userId = row.user_id;
+                const month = parseInt(row.month, 10);
+        
+                if (!formattedResults[userId]) {
+                    formattedResults[userId] = Array.from({ length: 12 }).fill(0);
+                }
+        
+                formattedResults[userId][month - 1] = row.record_count;
+            });
+        
+            const finalResult = Object.keys(formattedResults).map(userId => ({
+                name: `${userId}`,
+                data: formattedResults[userId]
+            }));
+        
+            res.send(finalResult)
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    countKoriklarSoni = async (req, res) => {
+        const currentYear = new Date().getFullYear();
+
+        function generateMonthArray() {
+            const months = [];
+            for (let i = 1; i <= 12; i++) {
+                months.push(i);
+            }
+            return months;
+        }
+
+        const query = `
+            SELECT 
+                DATE_FORMAT(FROM_UNIXTIME(rd.created_at), '%m') AS month,
+                COUNT(*) AS record_count
+            FROM 
+                registration_arxiv rd
+            WHERE
+                YEAR(FROM_UNIXTIME(rd.created_at)) = :currentYear
+            GROUP BY 
+                month
+        `;
+
+        db.query(query, {
+            replacements: { currentYear },
+            type: db.QueryTypes.SELECT
+        }).then(results => {
+            const monthArray = generateMonthArray();
+            const formattedResults = {};
+
+            results.forEach(row => {
+                const month = parseInt(row.month, 10);
+
+                if (!formattedResults[month]) {
+                    formattedResults[month] = 0;
+                }
+
+                formattedResults[month] = row.record_count;
+            });
+
+            const finalResult = monthArray.map(month => ({
+                name: `${month}`,
+                data: [formattedResults[month] || 0]
+            }));
+
+            const mergedData = finalResult.reduce((acc, curr) => acc.concat(curr.data), []);
+            res.send(mergedData);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
 }
 
 
