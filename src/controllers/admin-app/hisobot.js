@@ -879,7 +879,10 @@ class HisobotController {
             }));
 
             const mergedData = finalResult.reduce((acc, curr) => acc.concat(curr.data), []);
-            res.send(mergedData);
+            let arr = [{}]
+            arr[0].name = ""
+            arr[0].data = mergedData
+            res.send(arr);
         }).catch(error => {
             console.error(error);
         });

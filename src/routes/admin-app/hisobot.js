@@ -27,6 +27,6 @@ router.post('/countas', auth(), awaitHandlerFactory(hisobotController.countAS));
 router.post('/countworker', auth(), awaitHandlerFactory(hisobotController.countWorker));
 router.post('/tekshiruv-doktor', auth(), awaitHandlerFactory(hisobotController.countTekshiruvDoktor));
 router.post('/tekshiruv-laborant', auth(), awaitHandlerFactory(hisobotController.countTekshiruvLaborant));
-router.post('/tekshirushcount', auth(), awaitHandlerFactory(hisobotController.countKoriklarSoni));
+router.post('/tekshiruvcount', auth(), awaitHandlerFactory(hisobotController.countKoriklarSoni));
 
 module.exports = router;
