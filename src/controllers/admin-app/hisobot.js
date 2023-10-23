@@ -686,12 +686,25 @@ class HisobotController {
     }
 
     countAS = async (req, res) => {    
-        const [results, metadata] = await db.query(`
+        let role = req.currentUser.role
+        let filial_id = req.currentUser.filial_id
+
+        let query = `
             SELECT 
                 SUM(CASE WHEN type_service = 'Statsionar' THEN 1 ELSE 0 END) AS statsionar,
                 SUM(CASE WHEN type_service = 'Ambulator' THEN 1 ELSE 0 END) AS ambulator
             FROM registration
-        `);
+        `;
+
+        if (role === 'Admin') {
+            if (req.body.filial_id) {
+                query += `WHERE filial_id = ${req.body.filial_id}`; 
+            }
+        } else {
+            query += `WHERE filial_id = ${filial_id}`;
+        }
+
+        const [results, metadata] = await db.query(query);
 
         const [counts] = results;
         res.send(counts);
@@ -720,13 +733,22 @@ class HisobotController {
 
         const [results, metadata] = await db.query(sql);
 
-
         const [counts] = results;
         res.send(counts);
     }
 
     countTekshiruvDoktor = async (req, res) => {
+        let role = req.currentUser.role;
+        let filial_id;
+    
+        if (role == 'Admin') {
+            filial_id = req.body.filial_id;
+        } else {
+            filial_id = req.currentUser.filial_id;
+        }
+    
         const currentYear = new Date().getFullYear();
+    
         function generateMonthArray() {
             const months = [];
             for (let i = 1; i <= 12; i++) {
@@ -734,45 +756,55 @@ class HisobotController {
             }
             return months;
         }
-        
-        const query = `
-        SELECT 
-            u.user_name as user_id,
-            DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
-            COUNT(*) AS record_count
-        FROM 
-            register_doctor rd
-        JOIN 
-            user u ON rd.doctor_id = u.doctor_id
-        WHERE
-            YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
-        GROUP BY 
-            u.id, month
+    
+        let query = `
+            SELECT 
+                u.user_name as user_id,
+                DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
+                COUNT(*) AS record_count
+            FROM 
+                register_doctor rd
+            JOIN 
+                user u ON rd.doctor_id = u.doctor_id
+            WHERE
+                YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
         `;
+    
+        if (role === 'Admin') {
+            if (req.body.filial_id) {
+                query += ` AND rd.filial_id = :filial_id`;
+            }
+        } else {
+            query += ` AND rd.filial_id = :filial_id`;
+        }
         
+        query += `
+            GROUP BY u.id, month
+        `;
+
         db.query(query, {
-            replacements: { currentYear },
+            replacements: { currentYear, filial_id },
             type: db.QueryTypes.SELECT
         }).then(results => {
             const monthArray = generateMonthArray();
             const formattedResults = {};
-        
+    
             results.forEach(row => {
                 const userId = row.user_id;
                 const month = parseInt(row.month, 10);
-        
+    
                 if (!formattedResults[userId]) {
                     formattedResults[userId] = Array.from({ length: 12 }).fill(0);
                 }
-        
+    
                 formattedResults[userId][month - 1] = row.record_count;
             });
-        
+    
             const finalResult = Object.keys(formattedResults).map(userId => ({
                 name: `${userId}`,
                 data: formattedResults[userId]
             }));
-        
+
             res.send(finalResult)
         }).catch(error => {
             console.error(error);
@@ -780,6 +812,15 @@ class HisobotController {
     }
 
     countTekshiruvLaborant = async (req, res) => {
+        let role = req.currentUser.role;
+        let filial_id;
+    
+        if (role == 'Admin') {
+            filial_id = req.body.filial_id;
+        } else {
+            filial_id = req.currentUser.filial_id;
+        }
+
         const currentYear = new Date().getFullYear();
         function generateMonthArray() {
             const months = [];
@@ -789,23 +830,34 @@ class HisobotController {
             return months;
         }
         
-        const query = `
-        SELECT 
-            u.user_name as user_id,
-            DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
-            COUNT(*) AS record_count
-        FROM 
-            register_inspection rd
-        JOIN 
-            user u ON rd.user_id = u.id
-        WHERE
-            YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
-        GROUP BY 
-            u.id, month
+        let query = `
+            SELECT 
+                u.user_name as user_id,
+                DATE_FORMAT(FROM_UNIXTIME(rd.date_time), '%m') AS month,
+                COUNT(*) AS record_count
+            FROM 
+                register_inspection rd
+            JOIN 
+                user u ON rd.user_id = u.id
+            WHERE
+                YEAR(FROM_UNIXTIME(rd.date_time)) = :currentYear
+        `;    
+
+        if (role === 'Admin') {
+            if (req.body.filial_id) {
+                query += ` AND rd.filial_id = :filial_id`;
+            }
+        } else {
+            query += ` AND rd.filial_id = :filial_id`;
+        }
+
+        query += `
+            GROUP BY 
+                u.id, month
         `;
-        
+
         db.query(query, {
-            replacements: { currentYear },
+            replacements: { currentYear, filial_id },
             type: db.QueryTypes.SELECT
         }).then(results => {
             const monthArray = generateMonthArray();
@@ -835,6 +887,14 @@ class HisobotController {
 
     countKoriklarSoni = async (req, res) => {
         const currentYear = new Date().getFullYear();
+        let role = req.currentUser.role;
+        let filial_id;
+    
+        if (role == 'Admin') {
+            filial_id = req.body.filial_id;
+        } else {
+            filial_id = req.currentUser.filial_id;
+        }
 
         function generateMonthArray() {
             const months = [];
@@ -844,7 +904,7 @@ class HisobotController {
             return months;
         }
 
-        const query = `
+        let query = `
             SELECT 
                 DATE_FORMAT(FROM_UNIXTIME(rd.created_at), '%m') AS month,
                 COUNT(*) AS record_count
@@ -852,12 +912,22 @@ class HisobotController {
                 registration_arxiv rd
             WHERE
                 YEAR(FROM_UNIXTIME(rd.created_at)) = :currentYear
-            GROUP BY 
-                month
+        `;
+
+        if (role === 'Admin') {
+            if (req.body.filial_id) {
+                query += ` AND rd.filial_id = :filial_id`;
+            }
+        } else {
+            query += ` AND rd.filial_id = :filial_id`;
+        }
+
+        query += `
+            GROUP BY month
         `;
 
         db.query(query, {
-            replacements: { currentYear },
+            replacements: { currentYear, filial_id },
             type: db.QueryTypes.SELECT
         }).then(results => {
             const monthArray = generateMonthArray();
