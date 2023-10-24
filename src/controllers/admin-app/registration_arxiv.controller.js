@@ -17,7 +17,14 @@ const Registration_payModel = require('../../models/registration_pay_arxiv.model
 const Registration_doctorModel = require('../../models/registration_doctor_arxiv.model');
 class Registration_arxivController {
     getAll_arxiv = async (req, res, next) => {
-        // this.#arxiv();
+        let role = req.currentUser.role
+        let filial_id = req.currentUser.filial_id
+        let query = {}
+
+        if(role !== 'Admin') {
+            query.filial_id = filial_id
+        }
+
         const model = await ModelModel.findAll({
             include:[ 
                 {
@@ -42,11 +49,12 @@ class Registration_arxivController {
                         }
                     ]
                 } 
-             ],
-             limit: 200,
-             order: [
+            ],
+            limit: 200,
+            order: [
                 ['created_at', 'DESC']
-             ]
+            ],
+            where: query
         });
         res.status(200).send({  
             error: false,
@@ -138,6 +146,7 @@ class Registration_arxivController {
         }
        
     };
+
     getOne = async (req, res, next) => {
         
         const Prixod = await ModelModel.findOne({
