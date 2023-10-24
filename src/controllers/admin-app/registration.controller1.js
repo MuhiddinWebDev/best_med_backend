@@ -422,8 +422,8 @@ class RegistrationController {
         if (!model) {
             throw new HttpException(500, 'Something went wrong');
         }
-        await this.#inspectionadd(model, registration_inspection);
-        await this.#doctoradd(model,  registration_doctor);
+        await this.#inspectionadd(model, registration_inspection, filial_id);
+        await this.#doctoradd(model,  registration_doctor, filial_id);
         await this.#filesadd(model, registration_files);
         await this.#palataadd(model, registration_palata, filial_id);
         await this.#payAdd(model, registration_pay);
@@ -460,10 +460,10 @@ class RegistrationController {
             model.filial_id = data.filial_id;
             await model.validate();
             await model.save();
-            await this.#inspectionadd(model, registration_inspection,false);
-            await this.#doctoradd(model, registration_doctor,false);
+            await this.#inspectionadd(model, registration_inspection, filial_id, false);
+            await this.#doctoradd(model, registration_doctor, filial_id, false);
             await this.#filesadd(model, registration_files,false);
-            await this.#palataadd(model, registration_palata, filial_id,false);
+            await this.#palataadd(model, registration_palata, filial_id, false);
             await this.#payAdd(model, registration_pay,false);
             await this.#queue(false);
             await this.#directAdd(model, false);
@@ -605,7 +605,7 @@ class RegistrationController {
                }
         }
     }
-    #inspectionadd = async(model,  registration_inspection, insert = true) => {
+    #inspectionadd = async(model, registration_inspection, filial_id, insert = true) => {
         if(!insert){
             await this.#deleteInspection(model.id);
             await this.#deleteIns(model.id)
@@ -642,9 +642,18 @@ class RegistrationController {
                 function isHave(item) { 
                     return item.room_id == user.room_id&&item.patient_id == model.patient_id;
                 }
+
                 var have=await this.q.find(isHave);
                 if(have==undefined){
-                    this.q.push({"room_id":user.room_id,"patient_id":model.patient_id,"number":0,"date_time":Math.floor(new Date().getTime() / 1000),"status":data.status});
+                    this.q.push(
+                        {
+                            "room_id": user.room_id,
+                            "patient_id": model.patient_id, 
+                            "number":0,
+                            "date_time" : Math.floor(new Date().getTime() / 1000),
+                            "status": data.status,
+                            "filial_id": filial_id
+                        });
                 }
                 else if(data.status!=have.status){
                     if(data.status!='complete'){
@@ -693,7 +702,7 @@ class RegistrationController {
             await Registration_inspection_childModel.create(dds); 
         }
     }
-    #palataadd = async(model, registration_palata, filial_id,  insert = true) =>{
+    #palataadd = async(model, registration_palata, filial_id, insert = true) =>{
         var palata;
         var date_time = Math.floor(new Date().getTime() / 1000);
         if(!insert){
@@ -728,7 +737,7 @@ class RegistrationController {
 
         }
     }
-    #doctoradd = async(model, registration_doctor, insert = true) => {
+    #doctoradd = async(model, registration_doctor, filial_id, insert = true) => {
         if(!insert){
             await this.#deletedoctor(model.id);
             await this.#deleteDoctor(model.id);
@@ -741,25 +750,6 @@ class RegistrationController {
                 raw: true
             })
             
-            // Console.log olinmasin 
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
-            console.log(user.percent)
             var date_time = Math.floor(new Date().getTime() / 1000);
             let doctor = {
                 "date_time": date_time,
@@ -773,7 +763,6 @@ class RegistrationController {
                 "comment": "",
             }
             var {Registration_recipe, register_mkb,...data} = element;
-            console.log(element, "doctorrrrrrrr");
             var news={
                 "doctor_id":element.doctor_id,
                 "registration_id":model.id,
@@ -798,7 +787,8 @@ class RegistrationController {
                                 "patient_id":model.patient_id,
                                 "number":0,
                                 "date_time":Math.floor(new Date().getTime() / 1000),
-                                "status":data.status
+                                "status":data.status,
+                                "filial_id": filial_id
                             });
                         }else if(data.status!=have.status){
                             if(data.status!='complete'){
@@ -875,7 +865,7 @@ class RegistrationController {
                         has.status=element.status;
                         await has.save();
                     }
-                }else if(element.status!='complete') {
+                }else if(element.status != 'complete') {
                     var que=await QueueModel.findOne({
                         where:{ 
                             room_id: element.room_id,
@@ -889,6 +879,9 @@ class RegistrationController {
                     }else{
                         element.number=1;
                     }
+                    console.log(element)
+                    console.log(element)
+                    console.log(element)
                     await QueueModel.create(element);
                 }
             }else{
@@ -905,6 +898,9 @@ class RegistrationController {
                 }else{
                     element.number = 1;
                 }
+                console.log(element)
+                console.log(element)
+                console.log(element)
                 await QueueModel.create(element); 
             }
         } 
@@ -1491,29 +1487,20 @@ class RegistrationController {
         });
     }
     queueAll = async (req, res, next) => {
-        let query = {}
         let filial_id = req.currentUser.filial_id
-        let filialRooms = await RoomModel.findAll({
-            where: {
-                filial_id
-            }
-        })
+        let filialRooms = await RoomModel.findAll({where: {filial_id}, attributes: ['id']})
 
-        let alloweRooms = [] 
+        let allowedRooms = [] 
         for (let room of filialRooms) {
-            alloweRooms.push(parseInt(room.dataValues.id));
+            allowedRooms.push(parseInt(room.dataValues.id));
         }
 
-        query.status = {
-            [Op.not]: 'complete'
-        }
-
-        query.room_id = {
-            [Op.and]: {
-                [Op.not]: 0,
-                [Op.between]: alloweRooms
-            }
-        }
+        let query = {
+            status: {
+              [Op.not]: 'complete'
+            },
+            filial_id
+        };
 
         const model = await QueueModel.findAll({
             where: query,

@@ -63,6 +63,7 @@ class Registration_arxivController {
             data: model
         });
     }
+    
     searchsArxiv = async (req, res, next) => {
         let ModelList = await ModelModel.findAll({
             include:[

@@ -22,6 +22,9 @@ QueueModel.init({
 room_id : {
     type: DataTypes.INTEGER,
 },
+filial_id : {
+  type: DataTypes.INTEGER,
+},
 patient_id : {
     type: DataTypes.INTEGER,
 },
