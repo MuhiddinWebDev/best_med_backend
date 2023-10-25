@@ -13,6 +13,10 @@ SettingsModel.init({
         type: DataTypes.STRING(200),
         allowNull: false
     },
+    rules: {
+        type: DataTypes.STRING(200),
+        allowNull: false
+    },
     logo: {
         type: DataTypes.STRING(200),
     },
@@ -32,7 +36,6 @@ SettingsModel.init({
         type: DataTypes.STRING(200),
     }
 }, {
-  // Other model options go here
   sequelize, // We need to pass the connection instance
   modelName: 'SettingsModel', // We need to choose the model name
   tableName: 'settings',

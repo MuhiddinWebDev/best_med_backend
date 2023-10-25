@@ -39,7 +39,7 @@ class SettingsController {
     };
 
     create = async (req, res, next) => {
-        this.checkValidation(req);        
+        this.checkValidation(req);    
         const model = await SettingsModel.create(req.body);
         
         if (!model) {
@@ -54,7 +54,7 @@ class SettingsController {
             this.checkValidation(req);
 
             // Extract data from request body
-            const { name, logo, date1, date2, quote, header_right, header_left } = req.body;
+            const { name, logo, date1, date2, quote, header_right, header_left, rules } = req.body;
 
             // Find the model
             const models = await SettingsModel.findAll();
@@ -73,6 +73,7 @@ class SettingsController {
             modelToUpdate.quote = quote;
             modelToUpdate.header_right = header_right;
             modelToUpdate.header_left = header_left;
+            modelToUpdate.rules = rules;
 
             // Save the updated model
             await modelToUpdate.save();
