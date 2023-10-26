@@ -14,7 +14,7 @@ SettingsModel.init({
         allowNull: false
     },
     rules: {
-        type: DataTypes.STRING(200),
+        type: DataTypes.TEXT,
         allowNull: false
     },
     logo: {
