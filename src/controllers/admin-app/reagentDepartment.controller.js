@@ -3,10 +3,8 @@ const reagentDepartmentModel = require("../../models/reagent_department.model");
 const { validationResult } = require("express-validator");
 const reagentModel = require("../../models/reagent.model");
 const prixodTableModel = require("../../models/prixod_table.model");
-const department = require("../../models/department.model");
 const inspectionCategoryModel = require("../../models/doctor_category.model");
 const { Op, Sequelize } = require("sequelize");
-const sequelize = require("sequelize");
 /******************************************************************************
  *                              Employer Controller
  ******************************************************************************/
@@ -62,18 +60,6 @@ class reagentDepartmentController {
 
     const model = await reagentDepartmentModel.create(data);
 
-    let table = {
-      doc_id: model.id,
-      reagent_id: req.body.reagent_id,
-      count: req.body.count,
-      user_id: req.currentUser.id,
-      datetime: req.body.datetime,
-      filial_id: req.body.filial_id,
-      place: "Reagent",
-    };
-
-    await prixodTableModel.create(table);
-
     res.status(200).send({
       error: false,
       error_code: 200,
@@ -96,7 +82,7 @@ class reagentDepartmentController {
     model.department_id = req.body.department_id;
     model.reagent_id = req.body.reagent_id;
     model.count = req.body.count;
-    model.save();
+    await model.save();
     res.status(200).send({
       error: false,
       error_code: 200,
