@@ -56,6 +56,7 @@ class reagentDepartmentController {
       department_id: req.body.department_id,
       reagent_id: req.body.reagent_id,
       count: req.body.count,
+      comment: req.body.comment
     };
 
     const model = await reagentDepartmentModel.create(data);
@@ -82,6 +83,7 @@ class reagentDepartmentController {
     model.department_id = req.body.department_id;
     model.reagent_id = req.body.reagent_id;
     model.count = req.body.count;
+    model.comment = req.body.comment;
     await model.save();
     res.status(200).send({
       error: false,

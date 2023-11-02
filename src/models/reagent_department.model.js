@@ -40,6 +40,10 @@ datetime: {
 count:{
   type: DataTypes.DECIMAL,
   allowNull: false
+},
+comment: {
+  type: DataTypes.STRING(250),
+  allowNull: true
 }
 
 }, {
