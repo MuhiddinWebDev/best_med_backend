@@ -50,7 +50,7 @@ rang:{
 }, {
   sequelize,
   modelName: 'inspectionChild',
-  tableName: 'inspectionChild',
+  tableName: 'inspectionchild',
   timestamps: false,
   indexes: [
     {
