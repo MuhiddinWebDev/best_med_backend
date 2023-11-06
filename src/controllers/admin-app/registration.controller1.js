@@ -457,6 +457,7 @@ class RegistrationController {
             model.pay_summa = data.pay_summa;
             model.backlog = data.backlog;
             model.discount = data.discount;
+            model.hospital_summa = data.hospital_summa;
             model.filial_id = data.filial_id;
             await model.validate();
             await model.save();
